@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff Portal — Aether Tales</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Lora:ital,wght@0,400;0,500;1,400&family=Cinzel+Decorative:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #f0c96a;
+    --gold-dark: #b8922a;
+    --gold-dim: rgba(240,201,106,0.12);
+    --aether-purple: #c4a8e8;
+    --aether-deep: #6b4fa8;
+    --text-light: #f0ecff;
+    --text-muted: #c8bde8;
+    --bg-dark: #0a0520;
+    --bg-card: rgba(40,20,90,0.7);
+    --bg-input: rgba(15,8,40,0.9);
+    --border-glow: rgba(196,168,232,0.25);
+    --border-focus: rgba(240,201,106,0.6);
+    --success: #7dd4a0;
+    --danger: #f08080;
+    --warning: #f0c96a;
+    --info: #a8d4f5;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family:'Lora',Georgia,serif;
+    background:var(--bg-dark);
+    color:var(--text-light);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  body::before {
+    content:'';
+    position:fixed;
+    inset:0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -5%, rgba(107,79,168,0.5) 0%, transparent 70%),
+      linear-gradient(180deg,#0a0520 0%,#100728 50%,#0a0418 100%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  body::after {
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image:
+      radial-gradient(1px 1px at 8% 10%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 30% 6%, rgba(240,201,106,0.8) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 14%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 75% 8%, rgba(196,168,232,0.8) 0%, transparent 100%),
+      radial-gradient(1px 1px at 92% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 18% 30%, rgba(255,255,255,0.3) 0%, transparent 100%);
+    pointer-events:none;
+    z-index:0;
+    animation:twinkle 5s ease-in-out infinite alternate;
+  }
+
+  @keyframes twinkle { from{opacity:0.6} to{opacity:1} }
+
+  /* ══════════════════════════════════
+     LOGIN SCREEN
+  ══════════════════════════════════ */
+  #login-screen {
+    position:relative;
+    z-index:1;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:2rem;
+  }
+
+  .login-box {
+    width:100%;
+    max-width:440px;
+    background:rgba(20,8,55,0.9);
+    border:1px solid var(--border-glow);
+    border-radius:6px;
+    padding:3rem 2.5rem;
+    text-align:center;
+    backdrop-filter:blur(12px);
+    animation:fadeUp 0.6s ease both;
+  }
+
+  @keyframes fadeUp {
+    from{opacity:0;transform:translateY(20px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+
+  .login-sigil {
+    width:64px;
+    height:64px;
+    margin:0 auto 1.5rem;
+    filter:drop-shadow(0 0 16px rgba(240,201,106,0.5));
+    animation:sigilPulse 3s ease-in-out infinite alternate;
+  }
+
+  @keyframes sigilPulse {
+    from{filter:drop-shadow(0 0 10px rgba(240,201,106,0.3))}
+    to{filter:drop-shadow(0 0 24px rgba(240,201,106,0.7))}
+  }
+
+  .login-eyebrow {
+    font-family:'Cinzel',serif;
+    font-size:0.62rem;
+    letter-spacing:0.4em;
+    color:var(--text-muted);
+    margin-bottom:0.5rem;
+    text-transform:uppercase;
+  }
+
+  .login-title {
+    font-family:'Cinzel Decorative',serif;
+    font-size:1.6rem;
+    color:var(--gold);
+    margin-bottom:0.35rem;
+    text-shadow:0 0 30px rgba(240,201,106,0.4);
+  }
+
+  .login-subtitle {
+    font-style:italic;
+    font-size:0.82rem;
+    color:var(--text-muted);
+    margin-bottom:2rem;
+  }
+
+  .login-field {
+    position:relative;
+    margin-bottom:1rem;
+  }
+
+  .login-field label {
+    display:block;
+    font-family:'Cinzel',serif;
+    font-size:0.62rem;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    margin-bottom:0.4rem;
+    text-align:left;
+  }
+
+  .login-field input {
+    width:100%;
+    background:var(--bg-input);
+    border:1px solid var(--border-glow);
+    border-radius:3px;
+    color:var(--text-light);
+    font-family:'Share Tech Mono',monospace;
+    font-size:0.9rem;
+    padding:0.7rem 1rem;
+    outline:none;
+    transition:border-color 0.2s,box-shadow 0.2s;
+    letter-spacing:0.05em;
+  }
+
+  .login-field input:focus {
+    border-color:var(--border-focus);
+    box-shadow:0 0 0 3px rgba(240,201,106,0.08);
+  }
+
+  .toggle-pw {
+    position:absolute;
+    right:0.75rem;
+    bottom:0.7rem;
+    background:none;
+    border:none;
+    color:var(--text-muted);
+    cursor:pointer;
+    font-size:0.75rem;
+    font-family:'Cinzel',serif;
+    letter-spacing:0.1em;
+    transition:color 0.2s;
+  }
+  .toggle-pw:hover{color:var(--gold);}
+
+  .login-error {
+    display:none;
+    background:rgba(240,128,128,0.1);
+    border:1px solid rgba(240,128,128,0.3);
+    border-radius:3px;
+    padding:0.6rem 0.85rem;
+    font-size:0.8rem;
+    color:var(--danger);
+    margin-bottom:1rem;
+    font-style:italic;
+  }
+
+  .login-error.show{display:block;}
+
+  .btn-login {
+    width:100%;
+    background:var(--gold);
+    border:none;
+    border-radius:3px;
+    color:#0a0520;
+    font-family:'Cinzel',serif;
+    font-size:0.75rem;
+    letter-spacing:0.25em;
+    text-transform:uppercase;
+    font-weight:700;
+    padding:0.85rem;
+    cursor:pointer;
+    transition:all 0.2s;
+    margin-top:0.25rem;
+  }
+
+  .btn-login:hover{background:#f5d48a;transform:translateY(-1px);box-shadow:0 6px 20px rgba(240,201,106,0.25);}
+  .btn-login:active{transform:translateY(0);}
+
+  .login-attempts {
+    font-family:'Cinzel',serif;
+    font-size:0.6rem;
+    letter-spacing:0.15em;
+    color:rgba(200,189,232,0.3);
+    margin-top:1rem;
+  }
+
+  /* lockout shake */
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    20%,60%{transform:translateX(-6px)}
+    40%,80%{transform:translateX(6px)}
+  }
+  .shake{animation:shake 0.4s ease;}
+
+  /* ══════════════════════════════════
+     STAFF PORTAL
+  ══════════════════════════════════ */
+  #portal {
+    display:none;
+    position:relative;
+    z-index:1;
+  }
+
+  /* Top bar */
+  .topbar {
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:rgba(10,5,32,0.95);
+    border-bottom:1px solid var(--border-glow);
+    backdrop-filter:blur(12px);
+    padding:0 2rem;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    height:56px;
+    gap:1rem;
+  }
+
+  .topbar-left {
+    display:flex;
+    align-items:center;
+    gap:1rem;
+  }
+
+  .topbar-logo {
+    font-family:'Cinzel Decorative',serif;
+    font-size:1rem;
+    color:var(--gold);
+    text-shadow:0 0 20px rgba(240,201,106,0.3);
+  }
+
+  .topbar-badge {
+    font-family:'Cinzel',serif;
+    font-size:0.58rem;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    padding:0.2rem 0.6rem;
+    background:rgba(240,201,106,0.12);
+    border:1px solid rgba(240,201,106,0.3);
+    color:var(--gold);
+    border-radius:2px;
+  }
+
+  .topbar-right {
+    display:flex;
+    align-items:center;
+    gap:1rem;
+  }
+
+  .topbar-time {
+    font-family:'Share Tech Mono',monospace;
+    font-size:0.72rem;
+    color:var(--text-muted);
+    opacity:0.7;
+  }
+
+  .btn-logout {
+    font-family:'Cinzel',serif;
+    font-size:0.62rem;
+    letter-spacing:0.15em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    background:none;
+    border:1px solid var(--border-glow);
+    padding:0.35rem 0.85rem;
+    border-radius:2px;
+    cursor:pointer;
+    transition:all 0.2s;
+  }
+  .btn-logout:hover{color:var(--danger);border-color:rgba(240,128,128,0.4);}
+
+  /* Main layout */
+  .portal-body {
+    max-width:1200px;
+    margin:0 auto;
+    padding:2rem 1.5rem 4rem;
+  }
+
+  /* Stats row */
+  .stats-row {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1rem;
+    margin-bottom:2rem;
+  }
+
+  .stat-card {
+    background:var(--bg-card);
+    border:1px solid var(--border-glow);
+    border-radius:4px;
+    padding:1.1rem 1.25rem;
+    display:flex;
+    flex-direction:column;
+    gap:0.3rem;
+  }
+
+  .stat-label {
+    font-family:'Cinzel',serif;
+    font-size:0.6rem;
+    letter-spacing:0.25em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+  }
+
+  .stat-value {
+    font-family:'Cinzel',serif;
+    font-size:1.8rem;
+    font-weight:700;
+    color:var(--text-light);
+    line-height:1;
+  }
+
+  .stat-value.gold{color:var(--gold);}
+  .stat-value.purple{color:var(--aether-purple);}
+  .stat-value.green{color:var(--success);}
+  .stat-value.red{color:var(--danger);}
+
+  /* Toolbar */
+  .toolbar {
+    display:flex;
+    align-items:center;
+    gap:0.75rem;
+    margin-bottom:1.25rem;
+    flex-wrap:wrap;
+  }
+
+  .section-label {
+    font-family:'Cinzel',serif;
+    font-size:0.65rem;
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-right:auto;
+  }
+
+  .filter-btn {
+    font-family:'Cinzel',serif;
+    font-size:0.62rem;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    padding:0.3rem 0.8rem;
+    background:none;
+    border:1px solid var(--border-glow);
+    border-radius:2px;
+    color:var(--text-muted);
+    cursor:pointer;
+    transition:all 0.2s;
+  }
+  .filter-btn:hover,.filter-btn.active{background:var(--gold-dim);border-color:var(--gold-dark);color:var(--gold);}
+  .filter-btn.f-pending.active{background:rgba(240,201,106,0.1);border-color:rgba(240,201,106,0.4);color:var(--warning);}
+  .filter-btn.f-approved.active{background:rgba(125,212,160,0.1);border-color:rgba(125,212,160,0.4);color:var(--success);}
+  .filter-btn.f-rejected.active{background:rgba(240,128,128,0.1);border-color:rgba(240,128,128,0.4);color:var(--danger);}
+  .filter-btn.f-breaking.active{background:rgba(240,128,128,0.12);border-color:rgba(240,128,128,0.5);color:var(--danger);}
+
+  .search-wrap {
+    position:relative;
+  }
+
+  .search-wrap input {
+    background:var(--bg-input);
+    border:1px solid var(--border-glow);
+    border-radius:3px;
+    color:var(--text-light);
+    font-family:'Lora',serif;
+    font-size:0.82rem;
+    padding:0.35rem 0.8rem 0.35rem 2rem;
+    outline:none;
+    width:200px;
+    transition:border-color 0.2s;
+  }
+  .search-wrap input:focus{border-color:var(--border-focus);}
+  .search-wrap::before{
+    content:'⌕';
+    position:absolute;
+    left:0.6rem;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--text-muted);
+    font-size:1rem;
+    pointer-events:none;
+  }
+
+  .btn-export {
+    font-family:'Cinzel',serif;
+    font-size:0.62rem;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    padding:0.35rem 0.85rem;
+    background:rgba(168,212,245,0.08);
+    border:1px solid rgba(168,212,245,0.3);
+    border-radius:2px;
+    color:var(--info);
+    cursor:pointer;
+    transition:all 0.2s;
+  }
+  .btn-export:hover{background:rgba(168,212,245,0.15);}
+
+  /* Empty state */
+  .empty-state {
+    text-align:center;
+    padding:4rem 2rem;
+    background:var(--bg-card);
+    border:1px solid var(--border-glow);
+    border-radius:4px;
+  }
+  .empty-state .empty-icon{font-size:2.5rem;margin-bottom:1rem;opacity:0.5;}
+  .empty-state p{font-style:italic;color:var(--text-muted);font-size:0.9rem;}
+
+  /* Submission cards */
+  .submissions-list {
+    display:flex;
+    flex-direction:column;
+    gap:1px;
+  }
+
+  .sub-card {
+    background:var(--bg-card);
+    border:1px solid var(--border-glow);
+    border-radius:4px;
+    overflow:hidden;
+    transition:border-color 0.2s;
+    margin-bottom:0.75rem;
+  }
+
+  .sub-card:hover{border-color:rgba(196,168,232,0.45);}
+
+  .sub-card.priority-breaking{border-left:3px solid var(--danger);}
+  .sub-card.priority-high{border-left:3px solid var(--warning);}
+  .sub-card.priority-normal{border-left:3px solid var(--border-glow);}
+
+  .sub-card.status-approved{border-top:2px solid rgba(125,212,160,0.5);}
+  .sub-card.status-rejected{opacity:0.65;}
+
+  .sub-header {
+    display:flex;
+    align-items:flex-start;
+    gap:1rem;
+    padding:1.1rem 1.25rem;
+    cursor:pointer;
+    user-select:none;
+  }
+
+  .sub-header:hover .sub-title{color:var(--gold);}
+
+  .sub-meta-left {
+    flex:1;
+    min-width:0;
+  }
+
+  .sub-badges {
+    display:flex;
+    align-items:center;
+    gap:0.4rem;
+    flex-wrap:wrap;
+    margin-bottom:0.45rem;
+  }
+
+  .badge {
+    font-family:'Cinzel',serif;
+    font-size:0.58rem;
+    letter-spacing:0.15em;
+    text-transform:uppercase;
+    padding:0.15rem 0.5rem;
+    border-radius:2px;
+    border:1px solid;
+    white-space:nowrap;
+  }
+
+  .badge-pending{background:rgba(240,201,106,0.1);border-color:rgba(240,201,106,0.35);color:var(--warning);}
+  .badge-approved{background:rgba(125,212,160,0.1);border-color:rgba(125,212,160,0.4);color:var(--success);}
+  .badge-rejected{background:rgba(240,128,128,0.1);border-color:rgba(240,128,128,0.35);color:var(--danger);}
+  .badge-breaking{background:rgba(240,128,128,0.12);border-color:rgba(240,128,128,0.5);color:var(--danger);}
+  .badge-high{background:rgba(240,201,106,0.08);border-color:rgba(240,201,106,0.3);color:var(--warning);}
+  .badge-cat{background:rgba(196,168,232,0.08);border-color:rgba(196,168,232,0.3);color:var(--aether-purple);}
+
+  .sub-title {
+    font-family:'Cinzel',serif;
+    font-size:0.95rem;
+    font-weight:600;
+    color:var(--text-light);
+    line-height:1.3;
+    margin-bottom:0.35rem;
+    transition:color 0.2s;
+  }
+
+  .sub-info {
+    font-family:'Share Tech Mono',monospace;
+    font-size:0.7rem;
+    color:rgba(200,189,232,0.45);
+    display:flex;
+    gap:0.75rem;
+    flex-wrap:wrap;
+  }
+
+  .sub-info span{white-space:nowrap;}
+
+  .sub-right {
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:0.5rem;
+    flex-shrink:0;
+  }
+
+  .chevron {
+    font-size:0.7rem;
+    color:var(--text-muted);
+    transition:transform 0.2s;
+  }
+
+  .sub-card.open .chevron{transform:rotate(180deg);}
+
+  /* Expanded content */
+  .sub-body {
+    display:none;
+    border-top:1px solid var(--border-glow);
+    padding:1.5rem 1.25rem;
+  }
+
+  .sub-card.open .sub-body{display:block;}
+
+  .sub-body-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1.5rem;
+    margin-bottom:1.5rem;
+  }
+
+  .detail-group {
+    display:flex;
+    flex-direction:column;
+    gap:0.35rem;
+  }
+
+  .detail-label {
+    font-family:'Cinzel',serif;
+    font-size:0.6rem;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+  }
+
+  .detail-value {
+    font-size:0.88rem;
+    color:var(--text-light);
+    line-height:1.6;
+    word-break:break-word;
+  }
+
+  .story-block {
+    background:rgba(10,5,30,0.6);
+    border:1px solid rgba(196,168,232,0.15);
+    border-radius:3px;
+    padding:1.1rem 1.25rem;
+    font-size:0.88rem;
+    line-height:1.8;
+    color:var(--text-muted);
+    margin-bottom:1.5rem;
+    white-space:pre-wrap;
+    word-break:break-word;
+    max-height:300px;
+    overflow-y:auto;
+  }
+
+  .story-block::-webkit-scrollbar{width:4px;}
+  .story-block::-webkit-scrollbar-track{background:transparent;}
+  .story-block::-webkit-scrollbar-thumb{background:rgba(196,168,232,0.2);border-radius:2px;}
+
+  /* Action buttons */
+  .action-row {
+    display:flex;
+    gap:0.6rem;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+
+  .btn-action {
+    font-family:'Cinzel',serif;
+    font-size:0.65rem;
+    letter-spacing:0.15em;
+    text-transform:uppercase;
+    padding:0.45rem 1rem;
+    border-radius:3px;
+    border:1px solid;
+    cursor:pointer;
+    transition:all 0.2s;
+    font-weight:600;
+  }
+
+  .btn-approve{background:rgba(125,212,160,0.1);border-color:rgba(125,212,160,0.4);color:var(--success);}
+  .btn-approve:hover{background:rgba(125,212,160,0.2);}
+  .btn-reject{background:rgba(240,128,128,0.08);border-color:rgba(240,128,128,0.35);color:var(--danger);}
+  .btn-reject:hover{background:rgba(240,128,128,0.18);}
+  .btn-pending-reset{background:rgba(240,201,106,0.08);border-color:rgba(240,201,106,0.3);color:var(--warning);}
+  .btn-pending-reset:hover{background:rgba(240,201,106,0.18);}
+  .btn-delete{background:transparent;border-color:rgba(240,128,128,0.2);color:rgba(240,128,128,0.5);margin-left:auto;}
+  .btn-delete:hover{border-color:rgba(240,128,128,0.5);color:var(--danger);}
+
+  .staff-note-wrap {
+    flex:1;
+    min-width:200px;
+  }
+
+  .staff-note-wrap input {
+    width:100%;
+    background:var(--bg-input);
+    border:1px solid var(--border-glow);
+    border-radius:3px;
+    color:var(--text-light);
+    font-family:'Lora',serif;
+    font-style:italic;
+    font-size:0.8rem;
+    padding:0.4rem 0.75rem;
+    outline:none;
+    transition:border-color 0.2s;
+  }
+  .staff-note-wrap input:focus{border-color:var(--border-focus);}
+  .staff-note-wrap input::placeholder{color:rgba(196,168,232,0.3);}
+
+  .images-section {
+    margin-bottom:1.25rem;
+  }
+
+  .image-link {
+    display:inline-block;
+    font-family:'Share Tech Mono',monospace;
+    font-size:0.75rem;
+    color:var(--info);
+    margin-right:0.5rem;
+    word-break:break-all;
+    text-decoration:none;
+  }
+  .image-link:hover{color:var(--gold);}
+
+  /* Footer */
+  footer {
+    border-top:1px solid var(--border-glow);
+    padding:1.5rem;
+    text-align:center;
+    margin-top:2rem;
+  }
+  .footer-text{font-size:0.7rem;color:rgba(200,189,232,0.3);font-style:italic;}
+  .footer-links{display:flex;justify-content:center;gap:1.5rem;margin-top:0.6rem;}
+  .footer-links a{font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(200,189,232,0.3);text-decoration:none;transition:color 0.2s;}
+  .footer-links a:hover{color:var(--gold);}
+
+  @media(max-width:700px){
+    .stats-row{grid-template-columns:1fr 1fr;}
+    .sub-body-grid{grid-template-columns:1fr;}
+    .topbar{padding:0 1rem;}
+    .portal-body{padding:1.25rem 1rem 3rem;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-box" id="login-box">
+
+    <!-- Pixel sigil SVG -->
+    <svg class="login-sigil" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <rect x="22" y="4" width="20" height="4" fill="#f0c96a"/>
+      <rect x="10" y="8" width="12" height="4" fill="#f0c96a"/>
+      <rect x="42" y="8" width="12" height="4" fill="#f0c96a"/>
+      <rect x="4" y="16" width="6" height="32" fill="#f0c96a"/>
+      <rect x="54" y="16" width="6" height="32" fill="#f0c96a"/>
+      <rect x="10" y="52" width="12" height="4" fill="#f0c96a"/>
+      <rect x="42" y="52" width="12" height="4" fill="#f0c96a"/>
+      <rect x="22" y="56" width="20" height="4" fill="#f0c96a"/>
+      <!-- interior -->
+      <rect x="12" y="12" width="40" height="40" fill="#1a0840" opacity="0.9"/>
+      <rect x="16" y="16" width="32" height="32" fill="#3d2875" opacity="0.7"/>
+      <!-- rune marks -->
+      <rect x="26" y="24" width="4" height="4" fill="#f0c96a" opacity="0.9"/>
+      <rect x="34" y="24" width="4" height="4" fill="#c4a8e8" opacity="0.9"/>
+      <rect x="26" y="36" width="4" height="4" fill="#c4a8e8" opacity="0.9"/>
+      <rect x="34" y="36" width="4" height="4" fill="#f0c96a" opacity="0.9"/>
+      <rect x="30" y="30" width="4" height="4" fill="#ffffff" opacity="0.8"/>
+    </svg>
+
+    <div class="login-eyebrow">Aether Tales &nbsp;✦&nbsp; Restricted Access</div>
+    <div class="login-title">Staff Portal</div>
+    <p class="login-subtitle">Editorial board & authorised staff only</p>
+
+    <div id="login-error" class="login-error">Incorrect passphrase. Access denied.</div>
+
+    <div class="login-field">
+      <label>Passphrase</label>
+      <div style="position:relative;">
+        <input type="password" id="pw-input" placeholder="Enter staff passphrase" autocomplete="off" spellcheck="false">
+        <button class="toggle-pw" type="button" id="toggle-pw" tabindex="-1">show</button>
+      </div>
+    </div>
+
+    <button class="btn-login" id="login-btn">Enter the Portal &nbsp; ✦</button>
+
+    <div class="login-attempts" id="attempt-counter"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     STAFF PORTAL
+══════════════════════════════════ -->
+<div id="portal">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-logo">Aether Tales</span>
+      <span class="topbar-badge">Staff Portal</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-time" id="live-clock"></span>
+      <button class="btn-logout" id="logout-btn">Lock &amp; Exit</button>
+    </div>
+  </div>
+
+  <div class="portal-body">
+
+    <!-- Stats -->
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card">
+        <span class="stat-label">Total Submissions</span>
+        <span class="stat-value gold" id="stat-total">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Awaiting Review</span>
+        <span class="stat-value purple" id="stat-pending">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Approved</span>
+        <span class="stat-value green" id="stat-approved">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Breaking Priority</span>
+        <span class="stat-value red" id="stat-breaking">0</span>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <span class="section-label">✦ &nbsp; Dispatches</span>
+      <div class="search-wrap">
+        <input type="text" id="search-input" placeholder="Search submissions…">
+      </div>
+      <button class="filter-btn f-all active" data-filter="all">All</button>
+      <button class="filter-btn f-pending" data-filter="pending">Pending</button>
+      <button class="filter-btn f-approved" data-filter="approved">Approved</button>
+      <button class="filter-btn f-rejected" data-filter="rejected">Rejected</button>
+      <button class="filter-btn f-breaking" data-filter="breaking">Breaking</button>
+      <button class="btn-export" id="export-btn">Export JSON</button>
+    </div>
+
+    <!-- Submissions list -->
+    <div id="submissions-list"></div>
+
+  </div>
+
+  <footer>
+    <p class="footer-text">Aether Tales Editorial Staff Portal &nbsp;✦&nbsp; Authorised access only</p>
+    <div class="footer-links">
+      <a href="aether-tales.html">Main Site</a>
+      <a href="submit.html">Submission Form</a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// ══════════════════════════════════════
+// PASSWORD & LOGIN
+// ══════════════════════════════════════
+const CORRECT_PW = 'alphaandLordAncasfisgoated===2';
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_MS = 5 * 60 * 1000;
+
+let attempts = parseInt(sessionStorage.getItem('at_attempts') || '0');
+let lockoutUntil = parseInt(sessionStorage.getItem('at_lockout') || '0');
+
+function isLockedOut() {
+  return Date.now() < lockoutUntil;
+}
+
+function updateAttemptDisplay() {
+  const el = document.getElementById('attempt-counter');
+  if (isLockedOut()) {
+    const remaining = Math.ceil((lockoutUntil - Date.now()) / 1000);
+    el.textContent = 'Locked out. Try again in ' + remaining + 's.';
+    document.getElementById('login-btn').disabled = true;
+    document.getElementById('pw-input').disabled = true;
+    setTimeout(updateAttemptDisplay, 1000);
+  } else {
+    document.getElementById('login-btn').disabled = false;
+    document.getElementById('pw-input').disabled = false;
+    if (attempts > 0) {
+      el.textContent = attempts + ' failed attempt' + (attempts > 1 ? 's' : '') + '. ' + (MAX_ATTEMPTS - attempts) + ' remaining.';
+    } else {
+      el.textContent = '';
+    }
+  }
+}
+
+updateAttemptDisplay();
+
+document.getElementById('toggle-pw').addEventListener('click', () => {
+  const inp = document.getElementById('pw-input');
+  const btn = document.getElementById('toggle-pw');
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'hide'; }
+  else { inp.type = 'password'; btn.textContent = 'show'; }
+});
+
+function attemptLogin() {
+  if (isLockedOut()) return;
+  const val = document.getElementById('pw-input').value;
+  if (val === CORRECT_PW) {
+    sessionStorage.setItem('at_auth', '1');
+    sessionStorage.removeItem('at_attempts');
+    sessionStorage.removeItem('at_lockout');
+    showPortal();
+  } else {
+    attempts++;
+    sessionStorage.setItem('at_attempts', attempts);
+    if (attempts >= MAX_ATTEMPTS) {
+      lockoutUntil = Date.now() + LOCKOUT_MS;
+      sessionStorage.setItem('at_lockout', lockoutUntil);
+    }
+    const errEl = document.getElementById('login-error');
+    errEl.classList.add('show');
+    errEl.textContent = attempts >= MAX_ATTEMPTS
+      ? 'Too many failed attempts. Locked out for 5 minutes.'
+      : 'Incorrect passphrase. Access denied.';
+    const box = document.getElementById('login-box');
+    box.classList.remove('shake');
+    void box.offsetWidth;
+    box.classList.add('shake');
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+    updateAttemptDisplay();
+  }
+}
+
+document.getElementById('login-btn').addEventListener('click', attemptLogin);
+document.getElementById('pw-input').addEventListener('keydown', e => { if(e.key==='Enter') attemptLogin(); });
+document.getElementById('logout-btn').addEventListener('click', () => {
+  sessionStorage.removeItem('at_auth');
+  document.getElementById('portal').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('pw-input').value = '';
+  document.getElementById('login-error').classList.remove('show');
+});
+
+// Auto-login if already authenticated this session
+if (sessionStorage.getItem('at_auth') === '1') showPortal();
+
+function showPortal() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('portal').style.display = 'block';
+  initPortal();
+}
+
+// ══════════════════════════════════════
+// PORTAL LOGIC
+// ══════════════════════════════════════
+
+let currentFilter = 'all';
+let currentSearch = '';
+let allSubs = [];
+
+function loadSubmissions() {
+  try {
+    allSubs = JSON.parse(localStorage.getItem('aetherSubmissions') || '[]');
+  } catch(e) { allSubs = []; }
+  return allSubs;
+}
+
+function saveSubmissions() {
+  localStorage.setItem('aetherSubmissions', JSON.stringify(allSubs));
+}
+
+function updateStats() {
+  const total = allSubs.length;
+  const pending = allSubs.filter(s => s.status === 'pending').length;
+  const approved = allSubs.filter(s => s.status === 'approved').length;
+  const breaking = allSubs.filter(s => s.priority === 'breaking').length;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-pending').textContent = pending;
+  document.getElementById('stat-approved').textContent = approved;
+  document.getElementById('stat-breaking').textContent = breaking;
+}
+
+function getFiltered() {
+  return allSubs.filter(s => {
+    const matchFilter =
+      currentFilter === 'all' ? true :
+      currentFilter === 'breaking' ? s.priority === 'breaking' :
+      s.status === currentFilter;
+    const q = currentSearch.toLowerCase();
+    const matchSearch = !q ||
+      (s.headline||'').toLowerCase().includes(q) ||
+      (s.ign||'').toLowerCase().includes(q) ||
+      (s.category||'').toLowerCase().includes(q) ||
+      (s.summary||'').toLowerCase().includes(q);
+    return matchFilter && matchSearch;
+  });
+}
+
+function timeAgo(ts) {
+  const diff = Date.now() - new Date(ts).getTime();
+  const m = Math.floor(diff/60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return m + 'm ago';
+  const h = Math.floor(m/60);
+  if (h < 24) return h + 'h ago';
+  return Math.floor(h/24) + 'd ago';
+}
+
+function formatDate(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts);
+  return d.toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'}) + ' ' +
+         d.toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
+}
+
+function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+
+function setStatus(id, status) {
+  const sub = allSubs.find(s => s.id === id);
+  if (!sub) return;
+  sub.status = status;
+  saveSubmissions();
+  updateStats();
+  renderList();
+}
+
+function saveStaffNote(id, note) {
+  const sub = allSubs.find(s => s.id === id);
+  if (!sub) return;
+  sub.staffNote = note;
+  saveSubmissions();
+}
+
+function deleteSub(id) {
+  if (!confirm('Delete this submission permanently?')) return;
+  allSubs = allSubs.filter(s => s.id !== id);
+  saveSubmissions();
+  updateStats();
+  renderList();
+}
+
+// Track which cards are open
+const openCards = new Set();
+
+function renderList() {
+  const list = document.getElementById('submissions-list');
+  const filtered = getFiltered();
+
+  if (filtered.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <p>${allSubs.length === 0
+          ? 'No dispatches have been submitted yet. Share the submission form with your citizens!'
+          : 'No submissions match your current filters.'}</p>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(s => {
+    const isOpen = openCards.has(s.id);
+    const statusClass = 'status-' + (s.status || 'pending');
+    const priorityClass = 'priority-' + (s.priority || 'normal');
+
+    const priorityBadge = s.priority && s.priority !== 'normal'
+      ? `<span class="badge badge-${s.priority}">${cap(s.priority)}</span>` : '';
+
+    const imgLinks = (s.images||'').split('\n').filter(l=>l.trim()).map(l=>
+      `<a class="image-link" href="${l.trim()}" target="_blank" rel="noopener">${l.trim()}</a>`
+    ).join('');
+
+    return `
+    <div class="sub-card ${statusClass} ${priorityClass} ${isOpen?'open':''}" data-id="${s.id}">
+      <div class="sub-header" onclick="toggleCard(${s.id})">
+        <div class="sub-meta-left">
+          <div class="sub-badges">
+            <span class="badge badge-${s.status||'pending'}">${cap(s.status||'pending')}</span>
+            ${priorityBadge}
+            <span class="badge badge-cat">${cap((s.category||'').replace('-',' '))}</span>
+          </div>
+          <div class="sub-title">${escHtml(s.headline||'Untitled')}</div>
+          <div class="sub-info">
+            <span>📋 ${escHtml(s.ign||'Unknown')}</span>
+            <span>🎖 ${escHtml(cap(s.rank||''))}</span>
+            <span>🕐 ${timeAgo(s.timestamp)}</span>
+            <span>${formatDate(s.timestamp)}</span>
+          </div>
+        </div>
+        <div class="sub-right">
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+
+      <div class="sub-body">
+        <div class="sub-body-grid">
+          <div class="detail-group">
+            <span class="detail-label">IGN</span>
+            <span class="detail-value">${escHtml(s.ign||'—')}</span>
+          </div>
+          <div class="detail-group">
+            <span class="detail-label">Discord</span>
+            <span class="detail-value">${escHtml(s.discord||'—')}</span>
+          </div>
+          <div class="detail-group">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">${escHtml(s.email||'—')}</span>
+          </div>
+          <div class="detail-group">
+            <span class="detail-label">Rank</span>
+            <span class="detail-value">${escHtml(cap(s.rank||'—'))}</span>
+          </div>
+          <div class="detail-group">
+            <span class="detail-label">Witness?</span>
+            <span class="detail-value">${escHtml(cap(s.witness||'—'))}</span>
+          </div>
+          <div class="detail-group">
+            <span class="detail-label">Submitted</span>
+            <span class="detail-value">${formatDate(s.timestamp)}</span>
+          </div>
+        </div>
+
+        <div class="detail-group" style="margin-bottom:0.75rem;">
+          <span class="detail-label">Summary</span>
+          <div class="story-block" style="min-height:auto;max-height:120px;">${escHtml(s.summary||'—')}</div>
+        </div>
+
+        <div class="detail-group" style="margin-bottom:1.25rem;">
+          <span class="detail-label">Full Story</span>
+          <div class="story-block">${escHtml(s.body||'—')}</div>
+        </div>
+
+        ${imgLinks ? `<div class="images-section detail-group" style="margin-bottom:1.25rem;">
+          <span class="detail-label">Images / Evidence</span>
+          <div class="detail-value">${imgLinks}</div>
+        </div>` : ''}
+
+        ${s.staffNote ? `<div class="detail-group" style="margin-bottom:1rem;">
+          <span class="detail-label">Staff Note</span>
+          <span class="detail-value" style="color:var(--warning);font-style:italic;">${escHtml(s.staffNote)}</span>
+        </div>` : ''}
+
+        <div class="action-row">
+          <button class="btn-action btn-approve" onclick="setStatus(${s.id},'approved')">✓ Approve</button>
+          <button class="btn-action btn-reject" onclick="setStatus(${s.id},'rejected')">✗ Reject</button>
+          <button class="btn-action btn-pending-reset" onclick="setStatus(${s.id},'pending')">↺ Pending</button>
+          <div class="staff-note-wrap">
+            <input type="text" placeholder="Add staff note…"
+              value="${escHtml(s.staffNote||'')}"
+              onchange="saveStaffNote(${s.id}, this.value)"
+              onblur="saveStaffNote(${s.id}, this.value)">
+          </div>
+          <button class="btn-action btn-delete" onclick="deleteSub(${s.id})">🗑 Delete</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCard(id) {
+  if (openCards.has(id)) openCards.delete(id);
+  else openCards.add(id);
+  renderList();
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+// Filters
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderList();
+  });
+});
+
+// Search
+document.getElementById('search-input').addEventListener('input', e => {
+  currentSearch = e.target.value;
+  renderList();
+});
+
+// Export
+document.getElementById('export-btn').addEventListener('click', () => {
+  const data = JSON.stringify(allSubs, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'aether-tales-submissions-' + Date.now() + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// Live clock
+function updateClock() {
+  const now = new Date();
+  document.getElementById('live-clock').textContent =
+    now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + ' ' +
+    now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+function initPortal() {
+  loadSubmissions();
+  updateStats();
+  renderList();
+  updateClock();
+  setInterval(updateClock, 1000);
+  // Poll for new submissions every 15s (in case submit form is open in another tab)
+  setInterval(() => {
+    loadSubmissions();
+    updateStats();
+    renderList();
+  }, 15000);
+}
+</script>
+</body>
+</html>

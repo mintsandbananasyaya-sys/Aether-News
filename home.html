@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aether Tales | Home</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Lora:ital,wght@0,400;0,500;1,400&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold:#f0c96a;
+  --gold-dark:#b8922a;
+  --sky-blue:#a8d4f5;
+  --cloud-white:#f5f0ff;
+  --aether-purple:#c4a8e8;
+  --aether-deep:#6b4fa8;
+  --aether-darker:#3d2875;
+  --text-light:#f0ecff;
+  --text-muted:#c8bde8;
+  --bg-dark:#0a0520;
+  --bg-mid:#150a35;
+  --bg-card:rgba(40,20,90,.72);
+  --bg-card-hover:rgba(60,35,120,.84);
+  --border-glow:rgba(196,168,232,.3);
+}
+
+* {
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html {
+  scroll-behavior:smooth;
+}
+
+body {
+  font-family:'Lora', Georgia, serif;
+  background:var(--bg-dark);
+  color:var(--text-light);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(107,79,168,.6) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 80% 20%, rgba(168,212,245,.15) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(196,168,232,.1) 0%, transparent 60%),
+    linear-gradient(180deg,#0a0520 0%,#120830 40%,#0d0628 100%);
+  pointer-events:none;
+  z-index:0;
+}
+
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 25% 8%, rgba(255,255,255,.6) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 40% 20%, rgba(240,201,106,.9) 0%, transparent 100%),
+    radial-gradient(1px 1px at 55% 5%, rgba(255,255,255,.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 12%, rgba(255,255,255,.5) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 85% 7%, rgba(196,168,232,.9) 0%, transparent 100%),
+    radial-gradient(1px 1px at 15% 35%, rgba(255,255,255,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 30%, rgba(255,255,255,.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 40%, rgba(255,255,255,.3) 0%, transparent 100%);
+  pointer-events:none;
+  z-index:0;
+  animation:twinkle 4s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  from { opacity:.7; }
+  to { opacity:1; }
+}
+
+.clouds {
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  overflow:hidden;
+}
+
+.cloud {
+  position:absolute;
+  border-radius:50px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  animation:drift linear infinite;
+}
+
+.cloud:nth-child(1) {
+  width:200px;
+  height:60px;
+  top:15%;
+  left:-220px;
+  animation-duration:60s;
+}
+
+.cloud:nth-child(2) {
+  width:300px;
+  height:80px;
+  top:30%;
+  left:-320px;
+  animation-duration:80s;
+  animation-delay:-20s;
+  opacity:.6;
+}
+
+.cloud:nth-child(3) {
+  width:150px;
+  height:45px;
+  top:8%;
+  left:-170px;
+  animation-duration:50s;
+  animation-delay:-35s;
+}
+
+.cloud:nth-child(4) {
+  width:250px;
+  height:70px;
+  top:50%;
+  left:-270px;
+  animation-duration:90s;
+  animation-delay:-10s;
+  opacity:.5;
+}
+
+@keyframes drift {
+  from { transform:translateX(0); }
+  to { transform:translateX(calc(100vw + 400px)); }
+}
+
+.wrapper {
+  position:relative;
+  z-index:1;
+  max-width:1180px;
+  margin:0 auto;
+  padding:0 1.5rem;
+}
+
+header {
+  position:relative;
+  text-align:center;
+  padding:3.5rem 1rem 2rem;
+  border-bottom:1px solid var(--border-glow);
+}
+
+.header-ornament {
+  font-size:.75rem;
+  letter-spacing:.4em;
+  text-transform:uppercase;
+  color:var(--gold);
+  font-family:'Cinzel', serif;
+  margin-bottom:.75rem;
+  opacity:.85;
+}
+
+.site-title {
+  font-family:'Cinzel Decorative', serif;
+  font-size:clamp(2.2rem,6vw,4.2rem);
+  font-weight:700;
+  color:var(--gold);
+  text-shadow:
+    0 0 40px rgba(240,201,106,.5),
+    0 0 80px rgba(240,201,106,.2);
+  letter-spacing:.05em;
+  line-height:1.1;
+  animation:titleGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+  from {
+    text-shadow:
+      0 0 30px rgba(240,201,106,.4),
+      0 0 60px rgba(240,201,106,.15);
+  }
+  to {
+    text-shadow:
+      0 0 50px rgba(240,201,106,.7),
+      0 0 100px rgba(240,201,106,.3);
+  }
+}
+
+.site-tagline {
+  font-style:italic;
+  color:var(--text-muted);
+  font-size:1rem;
+  margin-top:.5rem;
+  letter-spacing:.05em;
+}
+
+nav {
+  display:flex;
+  justify-content:center;
+  gap:.25rem;
+  padding:1.25rem 0 1.5rem;
+  flex-wrap:wrap;
+}
+
+nav a {
+  font-family:'Cinzel', serif;
+  font-size:.75rem;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  text-decoration:none;
+  padding:.4rem 1rem;
+  border:1px solid transparent;
+  border-radius:2px;
+  transition:all .25s;
+}
+
+nav a:hover,
+nav a.active {
+  color:var(--gold);
+  border-color:var(--gold-dark);
+  background:rgba(240,201,106,.08);
+}
+
+.home-hero {
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:0;
+  min-height:520px;
+  border:1px solid var(--border-glow);
+  background:var(--bg-card);
+  border-radius:4px;
+  overflow:hidden;
+  margin-bottom:2rem;
+}
+
+.hero-copy {
+  padding:3rem;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.hero-kicker {
+  font-family:'Cinzel', serif;
+  font-size:.72rem;
+  letter-spacing:.32em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin-bottom:1rem;
+}
+
+.hero-copy h2 {
+  font-family:'Cinzel', serif;
+  font-size:clamp(2rem,5vw,4.4rem);
+  line-height:1;
+  color:var(--cloud-white);
+  margin-bottom:1rem;
+}
+
+.hero-copy h2 span {
+  display:block;
+  color:var(--gold);
+  text-shadow:0 0 35px rgba(240,201,106,.45);
+}
+
+.hero-copy p {
+  color:var(--text-muted);
+  line-height:1.8;
+  max-width:620px;
+  margin-bottom:1.6rem;
+}
+
+.hero-actions {
+  display:flex;
+  flex-wrap:wrap;
+  gap:.8rem;
+  margin-bottom:2rem;
+}
+
+.btn {
+  font-family:'Cinzel', serif;
+  font-size:.72rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  text-decoration:none;
+  padding:.85rem 1.15rem;
+  border-radius:3px;
+  transition:all .25s;
+}
+
+.btn-primary {
+  color:#140a2e;
+  background:var(--gold);
+  border:1px solid var(--gold);
+  box-shadow:0 0 24px rgba(240,201,106,.25);
+}
+
+.btn-primary:hover {
+  transform:translateY(-2px);
+  box-shadow:0 0 36px rgba(240,201,106,.45);
+}
+
+.btn-secondary {
+  color:var(--gold);
+  border:1px solid var(--gold-dark);
+  background:rgba(240,201,106,.05);
+}
+
+.btn-secondary:hover {
+  background:rgba(240,201,106,.12);
+  transform:translateY(-2px);
+}
+
+.hero-stats {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:.8rem;
+  max-width:520px;
+}
+
+.hero-stat {
+  border:1px solid rgba(196,168,232,.18);
+  background:rgba(10,5,32,.35);
+  padding:.85rem;
+  border-radius:3px;
+}
+
+.hero-stat strong {
+  display:block;
+  font-family:'Cinzel', serif;
+  color:var(--gold);
+  font-size:1.25rem;
+}
+
+.hero-stat span {
+  color:var(--text-muted);
+  font-size:.78rem;
+}
+
+.hero-art {
+  position:relative;
+  min-height:420px;
+  background:
+    linear-gradient(135deg, rgba(107,79,168,.35), rgba(61,40,117,.75)),
+    repeating-linear-gradient(0deg, transparent, transparent 15px, rgba(255,255,255,.015) 15px, rgba(255,255,255,.015) 16px),
+    repeating-linear-gradient(90deg, transparent, transparent 15px, rgba(255,255,255,.015) 15px, rgba(255,255,255,.015) 16px);
+  border-left:1px solid var(--border-glow);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.hero-art::before {
+  content:'';
+  position:absolute;
+  width:380px;
+  height:380px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(196,168,232,.24), transparent 65%);
+  filter:blur(5px);
+}
+
+.portal {
+  position:relative;
+  width:190px;
+  height:190px;
+  filter:drop-shadow(0 0 30px rgba(196,168,232,.65));
+  animation:portalPulse 3s ease-in-out infinite;
+}
+
+@keyframes portalPulse {
+  0%,100% { transform:scale(1); }
+  50% { transform:scale(1.05); }
+}
+
+.section-label {
+  font-family:'Cinzel', serif;
+  font-size:.7rem;
+  letter-spacing:.35em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  margin-bottom:1.25rem;
+  display:flex;
+  align-items:center;
+  gap:1rem;
+}
+
+.section-label::after {
+  content:'';
+  flex:1;
+  height:1px;
+  background:var(--border-glow);
+}
+
+.cards {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1.25rem;
+  margin-bottom:2rem;
+}
+
+.card {
+  background:var(--bg-card);
+  border:1px solid var(--border-glow);
+  border-radius:4px;
+  padding:1.5rem;
+  transition:all .25s;
+}
+
+.card:hover {
+  background:var(--bg-card-hover);
+  border-color:rgba(196,168,232,.55);
+  transform:translateY(-2px);
+}
+
+.card-icon {
+  width:100%;
+  aspect-ratio:16/8;
+  border-radius:2px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:2.4rem;
+  margin-bottom:1rem;
+  background:
+    linear-gradient(135deg,#1a0a40 0%,#2d1060 50%,#1a0a40 100%);
+  position:relative;
+  overflow:hidden;
+}
+
+.card-icon::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 7px, rgba(255,255,255,.02) 7px, rgba(255,255,255,.02) 8px),
+    repeating-linear-gradient(90deg, transparent, transparent 7px, rgba(255,255,255,.02) 7px, rgba(255,255,255,.02) 8px);
+}
+
+.card-icon span {
+  position:relative;
+  z-index:1;
+  filter:drop-shadow(0 0 8px rgba(196,168,232,.5));
+}
+
+.card h3 {
+  font-family:'Cinzel', serif;
+  color:var(--cloud-white);
+  font-size:1rem;
+  margin-bottom:.6rem;
+}
+
+.card p {
+  color:var(--text-muted);
+  line-height:1.65;
+  font-size:.86rem;
+}
+
+.main-panel {
+  display:grid;
+  grid-template-columns:1fr 300px;
+  gap:2rem;
+  margin-bottom:2.5rem;
+}
+
+.news-panel,
+.status-panel {
+  background:var(--bg-card);
+  border:1px solid var(--border-glow);
+  border-radius:4px;
+  padding:1.35rem;
+}
+
+.news-item {
+  display:grid;
+  grid-template-columns:80px 1fr;
+  gap:1rem;
+  padding:1rem 0;
+  border-bottom:1px solid rgba(196,168,232,.12);
+}
+
+.news-item:last-child {
+  border-bottom:none;
+}
+
+.news-thumb {
+  height:60px;
+  border-radius:2px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#2a1a00 0%,#4a2d00 50%,#2a1800 100%);
+}
+
+.news-title {
+  font-family:'Cinzel', serif;
+  color:var(--cloud-white);
+  font-size:.9rem;
+  margin-bottom:.3rem;
+}
+
+.news-text {
+  color:var(--text-muted);
+  font-size:.8rem;
+  line-height:1.55;
+}
+
+.stat-line {
+  display:flex;
+  justify-content:space-between;
+  gap:1rem;
+  padding:.55rem 0;
+  border-bottom:1px solid rgba(196,168,232,.12);
+}
+
+.stat-line:last-child {
+  border-bottom:none;
+}
+
+.stat-label {
+  color:var(--text-muted);
+  font-style:italic;
+  font-size:.85rem;
+}
+
+.stat-value {
+  font-family:'Cinzel', serif;
+  color:var(--aether-purple);
+  font-size:.78rem;
+  text-align:right;
+}
+
+footer {
+  border-top:1px solid var(--border-glow);
+  padding:2rem 0;
+  text-align:center;
+  margin-top:1rem;
+}
+
+.footer-logo {
+  font-family:'Cinzel Decorative', serif;
+  font-size:1.25rem;
+  color:var(--gold);
+  opacity:.75;
+  margin-bottom:.5rem;
+}
+
+.footer-text {
+  font-size:.75rem;
+  color:rgba(200,189,232,.4);
+  font-style:italic;
+}
+
+@media (max-width:850px) {
+  .home-hero {
+    grid-template-columns:1fr;
+  }
+
+  .hero-art {
+    border-left:none;
+    border-top:1px solid var(--border-glow);
+  }
+
+  .cards {
+    grid-template-columns:1fr;
+  }
+
+  .main-panel {
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width:560px) {
+  .hero-copy {
+    padding:2rem;
+  }
+
+  .hero-stats {
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="clouds">
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+</div>
+
+<div class="wrapper">
+
+  <header>
+    <div class="header-ornament">✦ &nbsp;Skybound Chronicle &nbsp;✦</div>
+    <h1 class="site-title">Aether Tales</h1>
+    <p class="site-tagline">News, legends, wars, builds, and stories from the Aether realm.</p>
+  </header>
+
+  <nav>
+    <a href="home.html" class="active">Home</a>
+    <a href="center.html">Article Center</a>
+    <a href="submit.html">Submit</a>
+  </nav>
+
+  <section class="home-hero">
+    <div class="hero-copy">
+      <div class="hero-kicker">Season II - Aether Tales</div>
+
+      <h2>
+        Join The
+        <span>Aether Tales</span>
+      </h2>
+
+      <p>
+        Welcome to Aether Tales, the newspaper team of the Aether. We do lots of news articles and if you want to help us, join us by contacting LordAncasf or Coalition leaders including alphadarkman or Cheeseman!
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="center.html">Enter Archive →</a>
+        <a class="btn btn-secondary" href="submit.html">Submit Dispatch</a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <strong>∞</strong>
+          <span>Stories Waiting</span>
+        </div>
+
+        <div class="hero-stat">
+          <strong>24/7</strong>
+          <span>Open Archive</span>
+        </div>
+
+        <div class="hero-stat">
+          <strong>II</strong>
+          <span>Current Season</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-art">
+      <svg class="portal" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect x="35" y="5" width="30" height="10" fill="#c4a8e8"/>
+        <rect x="15" y="15" width="20" height="10" fill="#c4a8e8"/>
+        <rect x="65" y="15" width="20" height="10" fill="#c4a8e8"/>
+        <rect x="5" y="25" width="10" height="50" fill="#c4a8e8"/>
+        <rect x="85" y="25" width="10" height="50" fill="#c4a8e8"/>
+        <rect x="15" y="75" width="20" height="10" fill="#c4a8e8"/>
+        <rect x="65" y="75" width="20" height="10" fill="#c4a8e8"/>
+        <rect x="35" y="85" width="30" height="10" fill="#c4a8e8"/>
+        <rect x="20" y="25" width="60" height="50" fill="#3d2875" opacity="0.8"/>
+        <rect x="25" y="30" width="50" height="40" fill="#6b4fa8" opacity="0.5"/>
+        <rect x="35" y="38" width="30" height="24" fill="#9b7fd4" opacity="0.4"/>
+        <rect x="40" y="43" width="8" height="8" fill="#f0c96a" opacity="0.9"/>
+        <rect x="52" y="43" width="8" height="8" fill="#c4a8e8" opacity="0.9"/>
+        <rect x="40" y="51" width="8" height="8" fill="#c4a8e8" opacity="0.9"/>
+        <rect x="52" y="51" width="8" height="8" fill="#f0c96a" opacity="0.9"/>
+      </svg>
+    </div>
+  </section>
+
+  <div class="section-label">Choose Your Path</div>
+
+  <section class="cards">
+    <article class="card">
+      <div class="card-icon"><span>📜</span></div>
+      <h3>Read the Chronicle</h3>
+      <p>Browse the Article Center and open every published dispatch from the Aether Tales archive.</p>
+    </article>
+
+    <article class="card">
+      <div class="card-icon"><span>✍️</span></div>
+      <h3>Submit a Story</h3>
+      <p>Send in reports about battles, builds, discoveries, diplomacy, council events, and realm rumors.</p>
+    </article>
+
+    <article class="card">
+      <div class="card-icon"><span>🏛️</span></div>
+      <h3>Follow the Nation</h3>
+      <p>Keep up with Aether politics, alliances, public notices, and important server history.</p>
+    </article>
+  </section>
+
+  <section class="main-panel">
+    <div class="news-panel">
+      <div class="section-label">Featured Dispatches</div>
+
+      <div class="news-item">
+        <div class="news-thumb">🏛️</div>
+        <div>
+          <div class="news-title">The Aether Council</div>
+          <p class="news-text">A featured article slot for your next official announcement or main story.</p>
+        </div>
+      </div>
+
+      <div class="news-item">
+        <div class="news-thumb">⚔️</div>
+        <div>
+          <div class="news-title">Conflict Reports</div>
+          <p class="news-text">Use this area to preview wars, raids, tensions, or military updates.</p>
+        </div>
+      </div>
+
+      <div class="news-item">
+        <div class="news-thumb">🔮</div>
+        <div>
+          <div class="news-title">Old Lore</div>
+          <p class="news-text">A space for mysterious legends, ruins, discoveries, or ancient Aether stories.</p>
+        </div>
+      </div>
+    </div>
+
+    <aside class="status-panel">
+      <div class="section-label">Realm Status</div>
+
+      <div class="stat-line">
+        <span class="stat-label">Realm</span>
+        <span class="stat-value">The Aether</span>
+      </div>
+
+      <div class="stat-line">
+        <span class="stat-label">Season</span>
+        <span class="stat-value">II</span>
+      </div>
+
+      <div class="stat-line">
+        <span class="stat-label">Archive</span>
+        <span class="stat-value">Open</span>
+      </div>
+
+      <div class="stat-line">
+        <span class="stat-label">Submissions</span>
+        <span class="stat-value">Accepted</span>
+      </div>
+
+      <div class="stat-line">
+        <span class="stat-label">Conflict Status</span>
+        <span class="stat-value">Inactive</span>
+      </div>
+    </aside>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Aether Tales</div>
+    <p class="footer-text">The archive remembers what the clouds forget. ✦</p>
+  </footer>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Article Center | Aether Tales</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Lora:ital,wght@0,400;0,500;1,400&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gold: #f0c96a;
+  --gold-dark: #b8922a;
+  --cloud-white: #f5f0ff;
+  --aether-purple: #c4a8e8;
+  --text-light: #f0ecff;
+  --text-muted: #c8bde8;
+  --bg-dark: #0a0520;
+  --bg-mid: #150a35;
+  --bg-card: rgba(40, 20, 90, 0.72);
+  --bg-card-hover: rgba(60, 35, 120, 0.82);
+  --border-glow: rgba(196, 168, 232, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Lora', serif;
+  background: var(--bg-dark);
+  color: var(--text-light);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Background glow */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(107,79,168,0.55) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 80% 20%, rgba(168,212,245,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(196,168,232,0.08) 0%, transparent 60%),
+    linear-gradient(180deg, #0a0520 0%, #120830 45%, #0d0628 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Stars */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 30% 8%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1.5px 1.5px at 55% 20%, rgba(240,201,106,0.9), transparent),
+    radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1.5px 1.5px at 90% 35%, rgba(196,168,232,0.8), transparent),
+    radial-gradient(1px 1px at 20% 55%, rgba(255,255,255,0.5), transparent);
+  pointer-events: none;
+  z-index: 0;
+  animation: twinkle 4s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  from { opacity: 0.7; }
+  to { opacity: 1; }
+}
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+header {
+  text-align: center;
+  padding: 3.5rem 1rem 2rem;
+  border-bottom: 1px solid var(--border-glow);
+}
+
+.header-ornament {
+  font-size: 0.75rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  margin-bottom: 0.75rem;
+}
+
+.site-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  color: var(--gold);
+  text-shadow:
+    0 0 40px rgba(240,201,106,0.45),
+    0 0 80px rgba(240,201,106,0.15);
+}
+
+.site-tagline {
+  margin-top: 0.6rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 1.4rem 0 2rem;
+  flex-wrap: wrap;
+}
+
+nav a {
+  text-decoration: none;
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0.45rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  transition: 0.25s;
+}
+
+nav a:hover,
+nav a.active {
+  color: var(--gold);
+  border-color: var(--gold-dark);
+  background: rgba(240,201,106,0.08);
+}
+
+.hero-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glow);
+  border-radius: 4px;
+  padding: 2.2rem;
+  margin-bottom: 2rem;
+}
+
+.hero-kicker {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.8rem;
+}
+
+.hero-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.5rem, 4vw, 2.4rem);
+  color: var(--cloud-white);
+  margin-bottom: 0.8rem;
+}
+
+.hero-text {
+  color: var(--text-muted);
+  line-height: 1.8;
+  max-width: 760px;
+}
+
+.section-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-glow);
+}
+
+.article-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.article-link {
+  display: grid;
+  grid-template-columns: 140px 1fr 40px;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glow);
+  border-radius: 4px;
+  padding: 1.2rem 1.4rem;
+  transition: all 0.25s;
+}
+
+.article-link:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(240,201,106,0.55);
+  transform: translateY(-2px);
+}
+
+.article-number {
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.article-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  color: var(--cloud-white);
+  line-height: 1.4;
+}
+
+.article-arrow {
+  color: var(--gold);
+  font-size: 1.4rem;
+  text-align: right;
+}
+
+.placeholder-note {
+  text-align: center;
+  padding: 2rem;
+  border: 1px dashed rgba(196,168,232,0.2);
+  border-radius: 4px;
+  color: var(--text-muted);
+  background: rgba(40,20,90,0.25);
+}
+
+footer {
+  border-top: 1px solid var(--border-glow);
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.footer-logo {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1.2rem;
+  color: var(--gold);
+  opacity: 0.75;
+  margin-bottom: 0.5rem;
+}
+
+.footer-text {
+  font-size: 0.75rem;
+  color: rgba(200,189,232,0.4);
+  font-style: italic;
+}
+
+@media (max-width: 700px) {
+  .article-link {
+    grid-template-columns: 1fr 30px;
+  }
+
+  .article-number {
+    grid-column: 1 / -1;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <header>
+    <div class="header-ornament">✦ &nbsp;Archive of the Realm &nbsp;✦</div>
+    <h1 class="site-title">Aether Tales</h1>
+    <p class="site-tagline">
+      Every dispatch, every report, every legend preserved.
+    </p>
+  </header>
+
+  <nav>
+    <a href="center.html" class="active">Article Center</a>
+    <a href="submit.html">Submit</a>
+    <a href="home.html">Home</a>
+  </nav>
+
+  <section class="hero-box">
+    <div class="hero-kicker">Central Chronicle Library</div>
+    <h2 class="hero-title">The Article Center</h2>
+    <p class="hero-text">
+      This archive contains every published dispatch of Aether Tales.
+      Click any article below to open the full story and read the complete report.
+      As new stories are written, they will be added here to preserve the history of the realm.
+    </p>
+  </section>
+
+  <div class="section-label">Available Articles</div>
+
+  <div class="article-list">
+
+    <!-- YOUR FIRST REAL ARTICLE -->
+    <a class="article-link" href="index.html">
+      <span class="article-number">Article 1</span>
+      <span class="article-title">
+        Empty for now
+      </span>
+      <span class="article-arrow">→</span>
+    </a>
+
+  </div>
+
+  <div class="placeholder-note">
+    More stories will appear here as the archives grow.
+  </div>
+
+  <footer>
+    <div class="footer-logo">Aether Tales</div>
+    <p class="footer-text">
+      More stories will appear here.
+    </p>
+  </footer>
+
+</div>
+
+</body>
+</html>
