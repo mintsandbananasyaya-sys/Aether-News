@@ -809,233 +809,158 @@
 </div>
 
 <script>
-// ══════════════════════════════════════
-// PASSWORD & LOGIN
-// ══════════════════════════════════════
-const CORRECT_PW = 'alphaandLordAncasfisgoated===2';
-const MAX_ATTEMPTS = 5;
-const LOCKOUT_MS = 5 * 60 * 1000;
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz1xvSXcQZ-XbRnHsPYW1FYqdRX9Paiosy3pLoadDMkyPU1Y62VYlyBnHFkVMmP4SYe6Q/exec";
+const CORRECT_PW = "alphaandLordAncasfisgoated===2";
 
-let attempts = parseInt(sessionStorage.getItem('at_attempts') || '0');
-let lockoutUntil = parseInt(sessionStorage.getItem('at_lockout') || '0');
-
-function isLockedOut() {
-  return Date.now() < lockoutUntil;
-}
-
-function updateAttemptDisplay() {
-  const el = document.getElementById('attempt-counter');
-  if (isLockedOut()) {
-    const remaining = Math.ceil((lockoutUntil - Date.now()) / 1000);
-    el.textContent = 'Locked out. Try again in ' + remaining + 's.';
-    document.getElementById('login-btn').disabled = true;
-    document.getElementById('pw-input').disabled = true;
-    setTimeout(updateAttemptDisplay, 1000);
-  } else {
-    document.getElementById('login-btn').disabled = false;
-    document.getElementById('pw-input').disabled = false;
-    if (attempts > 0) {
-      el.textContent = attempts + ' failed attempt' + (attempts > 1 ? 's' : '') + '. ' + (MAX_ATTEMPTS - attempts) + ' remaining.';
-    } else {
-      el.textContent = '';
-    }
-  }
-}
-
-updateAttemptDisplay();
-
-document.getElementById('toggle-pw').addEventListener('click', () => {
-  const inp = document.getElementById('pw-input');
-  const btn = document.getElementById('toggle-pw');
-  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'hide'; }
-  else { inp.type = 'password'; btn.textContent = 'show'; }
-});
+let allSubs = [];
+let currentFilter = "all";
+let currentSearch = "";
+const openCards = new Set();
 
 function attemptLogin() {
-  if (isLockedOut()) return;
-  const val = document.getElementById('pw-input').value;
+  const val = document.getElementById("pw-input").value;
+
   if (val === CORRECT_PW) {
-    sessionStorage.setItem('at_auth', '1');
-    sessionStorage.removeItem('at_attempts');
-    sessionStorage.removeItem('at_lockout');
+    sessionStorage.setItem("at_auth", "1");
     showPortal();
   } else {
-    attempts++;
-    sessionStorage.setItem('at_attempts', attempts);
-    if (attempts >= MAX_ATTEMPTS) {
-      lockoutUntil = Date.now() + LOCKOUT_MS;
-      sessionStorage.setItem('at_lockout', lockoutUntil);
-    }
-    const errEl = document.getElementById('login-error');
-    errEl.classList.add('show');
-    errEl.textContent = attempts >= MAX_ATTEMPTS
-      ? 'Too many failed attempts. Locked out for 5 minutes.'
-      : 'Incorrect passphrase. Access denied.';
-    const box = document.getElementById('login-box');
-    box.classList.remove('shake');
+    const err = document.getElementById("login-error");
+    err.classList.add("show");
+    err.textContent = "Incorrect passphrase. Access denied.";
+
+    const box = document.getElementById("login-box");
+    box.classList.remove("shake");
     void box.offsetWidth;
-    box.classList.add('shake');
-    document.getElementById('pw-input').value = '';
-    document.getElementById('pw-input').focus();
-    updateAttemptDisplay();
+    box.classList.add("shake");
+
+    document.getElementById("pw-input").value = "";
   }
 }
 
-document.getElementById('login-btn').addEventListener('click', attemptLogin);
-document.getElementById('pw-input').addEventListener('keydown', e => { if(e.key==='Enter') attemptLogin(); });
-document.getElementById('logout-btn').addEventListener('click', () => {
-  sessionStorage.removeItem('at_auth');
-  document.getElementById('portal').style.display = 'none';
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('pw-input').value = '';
-  document.getElementById('login-error').classList.remove('show');
+document.getElementById("login-btn").addEventListener("click", attemptLogin);
+
+document.getElementById("pw-input").addEventListener("keydown", e => {
+  if (e.key === "Enter") attemptLogin();
 });
 
-// Auto-login if already authenticated this session
-if (sessionStorage.getItem('at_auth') === '1') showPortal();
+document.getElementById("toggle-pw").addEventListener("click", () => {
+  const input = document.getElementById("pw-input");
+  const btn = document.getElementById("toggle-pw");
+
+  input.type = input.type === "password" ? "text" : "password";
+  btn.textContent = input.type === "password" ? "show" : "hide";
+});
+
+document.getElementById("logout-btn").addEventListener("click", () => {
+  sessionStorage.removeItem("at_auth");
+  document.getElementById("portal").style.display = "none";
+  document.getElementById("login-screen").style.display = "flex";
+});
+
+if (sessionStorage.getItem("at_auth") === "1") {
+  showPortal();
+}
 
 function showPortal() {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('portal').style.display = 'block';
+  document.getElementById("login-screen").style.display = "none";
+  document.getElementById("portal").style.display = "block";
   initPortal();
 }
 
-// ══════════════════════════════════════
-// PORTAL LOGIC
-// ══════════════════════════════════════
+async function loadSubmissions() {
+  const url = GOOGLE_SCRIPT_URL + "?password=" + encodeURIComponent(CORRECT_PW);
 
-let currentFilter = 'all';
-let currentSearch = '';
-let allSubs = [];
+  const res = await fetch(url);
+  const data = await res.json();
 
-function loadSubmissions() {
-  try {
-    allSubs = JSON.parse(localStorage.getItem('aetherSubmissions') || '[]');
-  } catch(e) { allSubs = []; }
-  return allSubs;
-}
+  if (data.error) {
+    alert("Unauthorized.");
+    return;
+  }
 
-function saveSubmissions() {
-  localStorage.setItem('aetherSubmissions', JSON.stringify(allSubs));
+  allSubs = data.map(item => ({
+    rowNumber: item.rowNumber,
+    timestamp: item.Timestamp || item.timestamp || "",
+    ign: item.IGN || item.ign || "",
+    discord: item.Discord || item.discord || "",
+    email: item.Email || item.email || "",
+    rank: item.Rank || item.rank || "",
+    witness: item.Witness || item.witness || "",
+    headline: item.Headline || item.headline || "Untitled Dispatch",
+    category: item.Category || item.category || "",
+    priority: item.Priority || item.priority || "normal",
+    summary: item.Summary || item.summary || "",
+    body: item["Full Story"] || item.body || "",
+    eventDate: item["Event Date"] || "",
+    location: item.Location || "",
+    players: item.Players || "",
+    images: item.Images || "",
+    sources: item.Sources || "",
+    editorNotes: item["Editor Notes"] || "",
+    status: item.status || "pending"
+  }));
 }
 
 function updateStats() {
-  const total = allSubs.length;
-  const pending = allSubs.filter(s => s.status === 'pending').length;
-  const approved = allSubs.filter(s => s.status === 'approved').length;
-  const breaking = allSubs.filter(s => s.priority === 'breaking').length;
-  document.getElementById('stat-total').textContent = total;
-  document.getElementById('stat-pending').textContent = pending;
-  document.getElementById('stat-approved').textContent = approved;
-  document.getElementById('stat-breaking').textContent = breaking;
+  document.getElementById("stat-total").textContent = allSubs.length;
+  document.getElementById("stat-pending").textContent = allSubs.filter(s => s.status === "pending").length;
+  document.getElementById("stat-approved").textContent = allSubs.filter(s => s.status === "approved").length;
+  document.getElementById("stat-breaking").textContent = allSubs.filter(s => s.priority === "breaking").length;
 }
 
 function getFiltered() {
   return allSubs.filter(s => {
-    const matchFilter =
-      currentFilter === 'all' ? true :
-      currentFilter === 'breaking' ? s.priority === 'breaking' :
-      s.status === currentFilter;
+    const filterMatch =
+      currentFilter === "all" ||
+      currentFilter === s.status ||
+      (currentFilter === "breaking" && s.priority === "breaking");
+
     const q = currentSearch.toLowerCase();
-    const matchSearch = !q ||
-      (s.headline||'').toLowerCase().includes(q) ||
-      (s.ign||'').toLowerCase().includes(q) ||
-      (s.category||'').toLowerCase().includes(q) ||
-      (s.summary||'').toLowerCase().includes(q);
-    return matchFilter && matchSearch;
+
+    const searchMatch =
+      !q ||
+      s.headline.toLowerCase().includes(q) ||
+      s.ign.toLowerCase().includes(q) ||
+      s.category.toLowerCase().includes(q) ||
+      s.summary.toLowerCase().includes(q);
+
+    return filterMatch && searchMatch;
   });
 }
 
-function timeAgo(ts) {
-  const diff = Date.now() - new Date(ts).getTime();
-  const m = Math.floor(diff/60000);
-  if (m < 1) return 'just now';
-  if (m < 60) return m + 'm ago';
-  const h = Math.floor(m/60);
-  if (h < 24) return h + 'h ago';
-  return Math.floor(h/24) + 'd ago';
-}
-
-function formatDate(ts) {
-  if (!ts) return '—';
-  const d = new Date(ts);
-  return d.toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'}) + ' ' +
-         d.toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
-}
-
-function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
-
-function setStatus(id, status) {
-  const sub = allSubs.find(s => s.id === id);
-  if (!sub) return;
-  sub.status = status;
-  saveSubmissions();
-  updateStats();
-  renderList();
-}
-
-function saveStaffNote(id, note) {
-  const sub = allSubs.find(s => s.id === id);
-  if (!sub) return;
-  sub.staffNote = note;
-  saveSubmissions();
-}
-
-function deleteSub(id) {
-  if (!confirm('Delete this submission permanently?')) return;
-  allSubs = allSubs.filter(s => s.id !== id);
-  saveSubmissions();
-  updateStats();
-  renderList();
-}
-
-// Track which cards are open
-const openCards = new Set();
-
 function renderList() {
-  const list = document.getElementById('submissions-list');
+  const list = document.getElementById("submissions-list");
   const filtered = getFiltered();
 
-  if (filtered.length === 0) {
+  if (!filtered.length) {
     list.innerHTML = `
       <div class="empty-state">
         <div class="empty-icon">📭</div>
-        <p>${allSubs.length === 0
-          ? 'No dispatches have been submitted yet. Share the submission form with your citizens!'
-          : 'No submissions match your current filters.'}</p>
-      </div>`;
+        <p>No submissions found.</p>
+      </div>
+    `;
     return;
   }
 
-  list.innerHTML = filtered.map(s => {
-    const isOpen = openCards.has(s.id);
-    const statusClass = 'status-' + (s.status || 'pending');
-    const priorityClass = 'priority-' + (s.priority || 'normal');
-
-    const priorityBadge = s.priority && s.priority !== 'normal'
-      ? `<span class="badge badge-${s.priority}">${cap(s.priority)}</span>` : '';
-
-    const imgLinks = (s.images||'').split('\n').filter(l=>l.trim()).map(l=>
-      `<a class="image-link" href="${l.trim()}" target="_blank" rel="noopener">${l.trim()}</a>`
-    ).join('');
-
-    return `
-    <div class="sub-card ${statusClass} ${priorityClass} ${isOpen?'open':''}" data-id="${s.id}">
-      <div class="sub-header" onclick="toggleCard(${s.id})">
+  list.innerHTML = filtered.map(s => `
+    <div class="sub-card status-${esc(s.status)} priority-${esc(s.priority)} ${openCards.has(s.rowNumber) ? "open" : ""}">
+      <div class="sub-header" onclick="toggleCard(${s.rowNumber})">
         <div class="sub-meta-left">
           <div class="sub-badges">
-            <span class="badge badge-${s.status||'pending'}">${cap(s.status||'pending')}</span>
-            ${priorityBadge}
-            <span class="badge badge-cat">${cap((s.category||'').replace('-',' '))}</span>
+            <span class="badge badge-${esc(s.status)}">${cap(s.status)}</span>
+            <span class="badge badge-cat">${esc(s.category)}</span>
+            ${s.priority !== "normal" ? `<span class="badge badge-${esc(s.priority)}">${cap(s.priority)}</span>` : ""}
           </div>
-          <div class="sub-title">${escHtml(s.headline||'Untitled')}</div>
+
+          <div class="sub-title">${esc(s.headline)}</div>
+
           <div class="sub-info">
-            <span>📋 ${escHtml(s.ign||'Unknown')}</span>
-            <span>🎖 ${escHtml(cap(s.rank||''))}</span>
-            <span>🕐 ${timeAgo(s.timestamp)}</span>
-            <span>${formatDate(s.timestamp)}</span>
+            <span>📋 ${esc(s.ign)}</span>
+            <span>🎖 ${esc(s.rank)}</span>
+            <span>🕐 ${formatDate(s.timestamp)}</span>
           </div>
         </div>
+
         <div class="sub-right">
           <span class="chevron">▼</span>
         </div>
@@ -1045,130 +970,165 @@ function renderList() {
         <div class="sub-body-grid">
           <div class="detail-group">
             <span class="detail-label">IGN</span>
-            <span class="detail-value">${escHtml(s.ign||'—')}</span>
+            <span class="detail-value">${esc(s.ign)}</span>
           </div>
+
           <div class="detail-group">
             <span class="detail-label">Discord</span>
-            <span class="detail-value">${escHtml(s.discord||'—')}</span>
+            <span class="detail-value">${esc(s.discord || "—")}</span>
           </div>
+
           <div class="detail-group">
             <span class="detail-label">Email</span>
-            <span class="detail-value">${escHtml(s.email||'—')}</span>
+            <span class="detail-value">${esc(s.email || "—")}</span>
           </div>
+
           <div class="detail-group">
-            <span class="detail-label">Rank</span>
-            <span class="detail-value">${escHtml(cap(s.rank||'—'))}</span>
+            <span class="detail-label">Witness</span>
+            <span class="detail-value">${esc(s.witness || "—")}</span>
           </div>
+
           <div class="detail-group">
-            <span class="detail-label">Witness?</span>
-            <span class="detail-value">${escHtml(cap(s.witness||'—'))}</span>
+            <span class="detail-label">Location</span>
+            <span class="detail-value">${esc(s.location || "—")}</span>
           </div>
+
           <div class="detail-group">
-            <span class="detail-label">Submitted</span>
-            <span class="detail-value">${formatDate(s.timestamp)}</span>
+            <span class="detail-label">Players</span>
+            <span class="detail-value">${esc(s.players || "—")}</span>
           </div>
         </div>
 
-        <div class="detail-group" style="margin-bottom:0.75rem;">
+        <div class="detail-group">
           <span class="detail-label">Summary</span>
-          <div class="story-block" style="min-height:auto;max-height:120px;">${escHtml(s.summary||'—')}</div>
+          <div class="story-block">${esc(s.summary || "—")}</div>
         </div>
 
-        <div class="detail-group" style="margin-bottom:1.25rem;">
+        <div class="detail-group">
           <span class="detail-label">Full Story</span>
-          <div class="story-block">${escHtml(s.body||'—')}</div>
+          <div class="story-block">${esc(s.body || "—")}</div>
         </div>
 
-        ${imgLinks ? `<div class="images-section detail-group" style="margin-bottom:1.25rem;">
+        <div class="detail-group">
           <span class="detail-label">Images / Evidence</span>
-          <div class="detail-value">${imgLinks}</div>
-        </div>` : ''}
+          <div class="story-block">${esc(s.images || "—")}</div>
+        </div>
 
-        ${s.staffNote ? `<div class="detail-group" style="margin-bottom:1rem;">
-          <span class="detail-label">Staff Note</span>
-          <span class="detail-value" style="color:var(--warning);font-style:italic;">${escHtml(s.staffNote)}</span>
-        </div>` : ''}
+        <div class="detail-group">
+          <span class="detail-label">Editor Notes</span>
+          <div class="story-block">${esc(s.editorNotes || "—")}</div>
+        </div>
 
         <div class="action-row">
-          <button class="btn-action btn-approve" onclick="setStatus(${s.id},'approved')">✓ Approve</button>
-          <button class="btn-action btn-reject" onclick="setStatus(${s.id},'rejected')">✗ Reject</button>
-          <button class="btn-action btn-pending-reset" onclick="setStatus(${s.id},'pending')">↺ Pending</button>
-          <div class="staff-note-wrap">
-            <input type="text" placeholder="Add staff note…"
-              value="${escHtml(s.staffNote||'')}"
-              onchange="saveStaffNote(${s.id}, this.value)"
-              onblur="saveStaffNote(${s.id}, this.value)">
-          </div>
-          <button class="btn-action btn-delete" onclick="deleteSub(${s.id})">🗑 Delete</button>
+          <button class="btn-action btn-approve" onclick="setStatus(${s.rowNumber}, 'approved')">✓ Approve</button>
+          <button class="btn-action btn-reject" onclick="setStatus(${s.rowNumber}, 'rejected')">✗ Reject</button>
+          <button class="btn-action btn-pending-reset" onclick="setStatus(${s.rowNumber}, 'pending')">↺ Pending</button>
         </div>
       </div>
-    </div>`;
-  }).join('');
+    </div>
+  `).join("");
 }
 
-function toggleCard(id) {
-  if (openCards.has(id)) openCards.delete(id);
-  else openCards.add(id);
+async function setStatus(rowNumber, status) {
+  await fetch(GOOGLE_SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      action: "updateStatus",
+      rowNumber,
+      status
+    })
+  });
+
+  const sub = allSubs.find(s => s.rowNumber === rowNumber);
+  if (sub) sub.status = status;
+
+  updateStats();
   renderList();
 }
 
-function escHtml(str) {
-  if (!str) return '';
-  return String(str)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
+function toggleCard(rowNumber) {
+  if (openCards.has(rowNumber)) openCards.delete(rowNumber);
+  else openCards.add(rowNumber);
+
+  renderList();
 }
 
-// Filters
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+document.querySelectorAll(".filter-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
     currentFilter = btn.dataset.filter;
     renderList();
   });
 });
 
-// Search
-document.getElementById('search-input').addEventListener('input', e => {
+document.getElementById("search-input").addEventListener("input", e => {
   currentSearch = e.target.value;
   renderList();
 });
 
-// Export
-document.getElementById('export-btn').addEventListener('click', () => {
-  const data = JSON.stringify(allSubs, null, 2);
-  const blob = new Blob([data], {type:'application/json'});
+document.getElementById("export-btn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(allSubs, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
+
   a.href = url;
-  a.download = 'aether-tales-submissions-' + Date.now() + '.json';
+  a.download = "aether-tales-submissions.json";
   a.click();
+
   URL.revokeObjectURL(url);
 });
 
-// Live clock
 function updateClock() {
-  const now = new Date();
-  document.getElementById('live-clock').textContent =
-    now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) + ' ' +
-    now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById("live-clock").textContent =
+    new Date().toLocaleString("en-GB");
 }
 
-function initPortal() {
-  loadSubmissions();
-  updateStats();
-  renderList();
+async function initPortal() {
   updateClock();
   setInterval(updateClock, 1000);
-  // Poll for new submissions every 15s (in case submit form is open in another tab)
-  setInterval(() => {
-    loadSubmissions();
+
+  await loadSubmissions();
+  updateStats();
+  renderList();
+
+  setInterval(async () => {
+    await loadSubmissions();
     updateStats();
     renderList();
   }, 15000);
+}
+
+function esc(str) {
+  return String(str ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function cap(str) {
+  str = String(str || "");
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function formatDate(value) {
+  if (!value) return "—";
+  const d = new Date(value);
+  if (isNaN(d)) return value;
+
+  return d.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  }) + " " + d.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
 }
 </script>
 </body>
