@@ -874,130 +874,121 @@
 </div>
 
 <script>
-  // ── Character counters ──
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz1xvSXcQZ-XbRnHsPYW1FYqdRX9Paiosy3pLoadDMkyPU1Y62VYlyBnHFkVMmP4SYe6Q/exec";
+
   function bindCounter(inputId, counterId, max) {
     const el = document.getElementById(inputId);
     const counter = document.getElementById(counterId);
     if (!el || !counter) return;
-    el.addEventListener('input', () => {
+
+    el.addEventListener("input", () => {
       const len = el.value.length;
-      counter.textContent = len + ' / ' + max;
-      counter.className = 'char-count' + (len > max * 0.9 ? (len >= max ? ' over' : ' warn') : '');
+      counter.textContent = len + " / " + max;
+      counter.className = "char-count" + (len > max * 0.9 ? " warn" : "");
     });
   }
 
-  bindCounter('story-title', 'title-count', 120);
-  bindCounter('summary', 'summary-count', 400);
-  bindCounter('body', 'body-count', 5000);
+  bindCounter("story-title", "title-count", 120);
+  bindCounter("summary", "summary-count", 400);
+  bindCounter("body", "body-count", 5000);
 
-  // ── Validation ──
   function setInvalid(fieldId, invalid) {
     const el = document.getElementById(fieldId);
-    if (!el) return;
-    el.classList.toggle('invalid', invalid);
+    if (el) el.classList.toggle("invalid", invalid);
   }
 
   function validate() {
     let ok = true;
 
-    // IGN
-    const ign = document.getElementById('ign').value.trim();
-    if (!ign) { setInvalid('field-ign', true); ok = false; } else { setInvalid('field-ign', false); }
+    const ign = document.getElementById("ign").value.trim();
+    const rank = document.getElementById("nation-rank").value;
+    const title = document.getElementById("story-title").value.trim();
+    const category = document.querySelector("input[name='category']:checked");
+    const summary = document.getElementById("summary").value.trim();
+    const body = document.getElementById("body").value.trim();
+    const agreed = document.getElementById("agree-accurate").checked;
 
-    // Rank
-    const rank = document.getElementById('nation-rank').value;
-    if (!rank) { setInvalid('field-nation-rank', true); ok = false; } else { setInvalid('field-nation-rank', false); }
+    setInvalid("field-ign", !ign);
+    setInvalid("field-nation-rank", !rank);
+    setInvalid("field-title", !title);
+    setInvalid("field-summary", !summary);
+    setInvalid("field-body", body.length < 30);
 
-    // Title
-    const title = document.getElementById('story-title').value.trim();
-    if (!title) { setInvalid('field-title', true); ok = false; } else { setInvalid('field-title', false); }
+    document.getElementById("category-error").style.display = category ? "none" : "block";
+    document.getElementById("agree-error").style.display = agreed ? "none" : "block";
 
-    // Category
-    const cat = document.querySelector('input[name="category"]:checked');
-    if (!cat) {
-      document.getElementById('category-error').style.display = 'block';
+    if (!ign || !rank || !title || !category || !summary || body.length < 30 || !agreed) {
       ok = false;
-    } else {
-      document.getElementById('category-error').style.display = 'none';
     }
-
-    // Summary
-    const summary = document.getElementById('summary').value.trim();
-    if (!summary) { setInvalid('field-summary', true); ok = false; } else { setInvalid('field-summary', false); }
-
-    // Body
-    const body = document.getElementById('body').value.trim();
-    if (body.length < 30) { setInvalid('field-body', true); ok = false; } else { setInvalid('field-body', false); }
-
-    // Agreement
-    const agreed = document.getElementById('agree-accurate').checked;
-    document.getElementById('agree-error').style.display = agreed ? 'none' : 'block';
-    if (!agreed) ok = false;
 
     return ok;
   }
 
-  // ── Submit ──
-  document.getElementById('submit-form').addEventListener('submit', function(e) {
+  document.getElementById("submit-form").addEventListener("submit", async function(e) {
     e.preventDefault();
+
     if (!validate()) return;
 
-    const btn = document.getElementById('submit-btn');
+    const btn = document.getElementById("submit-btn");
     btn.disabled = true;
-    btn.textContent = 'Sending…';
+    btn.textContent = "Sending…";
 
-    // Collect submission data
     const submission = {
-      id: Date.now(),
-      timestamp: new Date().toISOString(),
-      ign: document.getElementById('ign').value.trim(),
-      discord: document.getElementById('discord').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      rank: document.getElementById('nation-rank').value,
-      witness: (document.querySelector('input[name="witness"]:checked') || {}).value || 'unknown',
-      headline: document.getElementById('story-title').value.trim(),
-      category: (document.querySelector('input[name="category"]:checked') || {}).value || '',
-      priority: (document.querySelector('input[name="priority"]:checked') || {}).value || 'normal',
-      summary: document.getElementById('summary').value.trim(),
-      body: document.getElementById('body').value.trim(),
-      images: document.getElementById('images').value.trim(),
-      status: 'pending'
+      ign: document.getElementById("ign").value.trim(),
+      discord: document.getElementById("discord").value.trim(),
+      email: document.getElementById("email").value.trim(),
+      rank: document.getElementById("nation-rank").value,
+      witness: document.querySelector("input[name='witness']:checked")?.value || "unknown",
+      headline: document.getElementById("story-title").value.trim(),
+      category: document.querySelector("input[name='category']:checked")?.value || "",
+      priority: document.querySelector("input[name='priority']:checked")?.value || "normal",
+      summary: document.getElementById("summary").value.trim(),
+      body: document.getElementById("body").value.trim(),
+      eventDate: document.querySelector("input[name='event-date']").value.trim(),
+      location: document.querySelector("input[name='location']").value.trim(),
+      players: document.querySelector("input[name='players']").value.trim(),
+      images: document.getElementById("images").value.trim(),
+      sources: document.querySelector("input[name='sources']").value.trim(),
+      editorNotes: document.querySelector("textarea[name='editor-notes']").value.trim()
     };
 
-    // Save to localStorage for the staff page to pick up
-    const existing = JSON.parse(localStorage.getItem('aetherSubmissions') || '[]');
-    existing.unshift(submission);
-    localStorage.setItem('aetherSubmissions', JSON.stringify(existing));
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(submission)
+      });
 
-    setTimeout(() => {
-      document.getElementById('form-card').style.display = 'none';
-      document.getElementById('success-screen').style.display = 'block';
-      document.querySelector('.intro-box').style.display = 'none';
-    }, 600);
+      document.getElementById("form-card").style.display = "none";
+      document.getElementById("success-screen").style.display = "block";
+      document.querySelector(".intro-box").style.display = "none";
+
+    } catch (error) {
+      alert("The dispatch could not be sent. Check your Google Script URL.");
+      btn.disabled = false;
+      btn.innerHTML = "Send Dispatch &nbsp; ✦";
+    }
   });
 
   function resetForm() {
-    document.getElementById('submit-form').reset();
-    document.getElementById('form-card').style.display = 'block';
-    document.getElementById('success-screen').style.display = 'none';
-    document.querySelector('.intro-box').style.display = 'block';
-    document.getElementById('submit-btn').disabled = false;
-    document.getElementById('submit-btn').innerHTML = 'Send Dispatch &nbsp; ✦';
-    ['title-count','summary-count','body-count'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = '0 / ' + el.textContent.split('/')[1].trim();
-    });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+    document.getElementById("submit-form").reset();
 
-  // Live validation — clear errors on input
-  ['ign','story-title','summary','body'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', () => {
-      const field = document.getElementById('field-' + id) || document.getElementById('field-' + id.replace('story-',''));
-      if (field) field.classList.remove('invalid');
-    });
-  });
+    document.getElementById("form-card").style.display = "block";
+    document.getElementById("success-screen").style.display = "none";
+    document.querySelector(".intro-box").style.display = "block";
+
+    document.getElementById("submit-btn").disabled = false;
+    document.getElementById("submit-btn").innerHTML = "Send Dispatch &nbsp; ✦";
+
+    document.getElementById("title-count").textContent = "0 / 120";
+    document.getElementById("summary-count").textContent = "0 / 400";
+    document.getElementById("body-count").textContent = "0 / 5000";
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 </script>
 </body>
 </html>
