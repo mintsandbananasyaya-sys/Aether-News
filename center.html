@@ -228,6 +228,41 @@ nav a.active {
   line-height: 1.4;
 }
 
+.content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.articles-column,
+.fails-column {
+  min-width: 0;
+}
+
+.fails-column {
+  position: sticky;
+  top: 1.5rem;
+}
+
+.fails-column .article-link {
+  grid-template-columns: 1fr 30px;
+}
+
+.fails-column .article-number {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 900px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fails-column {
+    position: static;
+  }
+}
+
 .article-arrow {
   color: var(--gold);
   font-size: 1.4rem;
@@ -301,62 +336,83 @@ footer {
       As new stories are written, they will be added here to preserve the history of the realm.
     </p>
   </section>
+<div class="content-grid">
 
-  <div class="section-label">Available Articles</div>
+  <section class="articles-column">
+    <div class="section-label">Available Articles</div>
 
-  <div class="article-list">
+    <div class="article-list">
 
-    <!-- YOUR FIRST REAL ARTICLE -->
-    <a class="article-link" href="index.html">
-      <span class="article-number">Article I - The Aether Coalition Nations - LordAncasf</span>
-      <span class="article-title">
-        This is a news report based on the verified nations inside of the Coalition and some misconceptions.
-      </span>
-      <span class="article-arrow">→</span>
+      <a class="article-link" href="index.html">
+        <span class="article-number">Article I - The Aether Coalition Nations - LordAncasf</span>
+        <span class="article-title">
+          This is a news report based on the verified nations inside of the Coalition and some misconceptions.
+        </span>
+        <span class="article-arrow">→</span>
+      </a>
 
-    </a>
+      <a class="article-link" href="page-2.html">
+        <span class="article-number">Article II - Cheeseman's Aether Coalition - LordAncasf</span>
+        <span class="article-title">
+          This is a news report based on the new Aether Coalition the Aether Tales has recently joined!
+        </span>
+        <span class="article-arrow">→</span>
+      </a>
 
-        <a class="article-link" href="page-2.html">
-      <span class="article-number">Article II - Cheeseman's Aether Coalition - LordAncasf</span>
-      <span class="article-title">
-        This is a news report based on the new Aether Coalition the Aether Tales has recently joined!
-      </span>
-      <span class="article-arrow">→</span>
-    </a>
+      <a class="article-link" href="page-3.html">
+        <span class="article-number">Article III - The Atlantis Sunken Ones - B4HHHP0LL0</span>
+        <span class="article-title">
+          This is a news report based on the nation in Atlantis known as "The Sunken Ones."
+        </span>
+        <span class="article-arrow">→</span>
+      </a>
 
-    <a class="article-link" href="page-3.html">
-      <span class="article-number">Article III - The Atlantis Sunken Ones - B4HHHP0LL0</span>
-      <span class="article-title">
-        This is a news report based on the nation in Atlantis known as "The Sunken Ones."
-      </span>
-      <span class="article-arrow">→</span>
-    </a>
+      <a class="article-link" href="page-4.html">
+        <span class="article-number">Article IV - The Imperial Senate - BlueWhiteDrag0n</span>
+        <span class="article-title">
+          This is a news report based on the nation in Aether known as "The Imperial Senate".
+        </span>
+        <span class="article-arrow">→</span>
+      </a>
 
-    <a class="article-link" href="page-4.html">
-      <span class="article-number">Article IV - The Imperial Senate - BlueWhiteDrag0n</span>
-      <span class="article-title">
-        This is a news report based on the nation in Aether known as "The Imperial Senate".
-      </span>
-      <span class="article-arrow">→</span>
-    </a>
+      <a class="article-link" href="page-5.html">
+        <span class="article-number">Article V - Interview with Moonweald Leader - JustPak</span>
+        <span class="article-title">
+          This is a news report based on the nation in Aether known as "Moonweald".
+        </span>
+        <span class="article-arrow">→</span>
+      </a>
 
-    <a class="article-link" href="page-5.html">
-      <span class="article-number">Article V - Interview with Moonweald Leader - JustPak</span>
-      <span class="article-title">
-        This is a news report based on the nation in Aether known as "Moonweald".
-      </span>
-      <span class="article-arrow">→</span>
-    </a>
+      <a class="article-link" href="page-6.html">
+        <span class="article-number">Article VI - The Bankers of Atlantis - Andrijaa</span>
+        <span class="article-title">
+          This is a news report based on the bankers in Atlantis.
+        </span>
+        <span class="article-arrow">→</span>
+      </a>
 
-    <a class="article-link" href="page-6.html">
-      <span class="article-number">Article VI - The Bankers of Atlantis - bluewhitedrag0n</span>
-      <span class="article-title">
-        This is a news report based on the bankers in Atlantis.
-      </span>
-      <span class="article-arrow">→</span>
-    </a>
+    </div>
+  </section>
 
-  </div>
+  <aside class="fails-column">
+    <div class="section-label">Aether Fails</div>
+
+    <div class="article-list">
+      <a class="article-link" href="aether-fails-1.html">
+        <span class="article-number">Aether Fails I</span>
+        <span class="article-title">
+          This is a news report based on The Aether Fails.
+        </span>
+        <span class="article-arrow">→</span>
+      </a>
+    </div>
+
+    <div class="placeholder-note">
+      More Aether Fails stories will appear here soon.
+    </div>
+  </aside>
+
+</div>
 
   <div class="placeholder-note">
     More stories will appear here as the archives grow.
