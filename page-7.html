@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aether Tales</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Lora:ital,wght@0,400;0,500;1,400&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #f0c96a;
+    --gold-dark: #b8922a;
+    --sky-blue: #a8d4f5;
+    --sky-pale: #e8f4fd;
+    --cloud-white: #f5f0ff;
+    --aether-purple: #c4a8e8;
+    --aether-deep: #6b4fa8;
+    --aether-darker: #3d2875;
+    --text-light: #f0ecff;
+    --text-muted: #c8bde8;
+    --bg-dark: #0a0520;
+    --bg-mid: #150a35;
+    --bg-card: rgba(40, 20, 90, 0.7);
+    --bg-card-hover: rgba(60, 35, 120, 0.8);
+    --border-glow: rgba(196, 168, 232, 0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Lora', Georgia, serif;
+    background: var(--bg-dark);
+    color: var(--text-light);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% -10%, rgba(107, 79, 168, 0.6) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 80% 20%, rgba(168, 212, 245, 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 20% 30%, rgba(196, 168, 232, 0.1) 0%, transparent 60%),
+      linear-gradient(180deg, #0a0520 0%, #120830 40%, #0d0628 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.8) 0%, transparent 100%),
+      radial-gradient(1px 1px at 25% 8%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 40% 20%, rgba(240,201,106,0.9) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 5%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 12%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 85% 7%, rgba(196,168,232,0.9) 0%, transparent 100%),
+      radial-gradient(1px 1px at 15% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 40%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 5% 55%, rgba(240,201,106,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 45% 50%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 78% 45%, rgba(196,168,232,0.6) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+    animation: twinkle 4s ease-in-out infinite alternate;
+  }
+
+  @keyframes twinkle {
+    0% { opacity: 0.7; }
+    100% { opacity: 1; }
+  }
+
+  .clouds {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .cloud {
+    position: absolute;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    animation: drift linear infinite;
+  }
+
+  .cloud:nth-child(1) { width: 200px; height: 60px; top: 15%; left: -220px; animation-duration: 60s; animation-delay: 0s; }
+  .cloud:nth-child(2) { width: 300px; height: 80px; top: 30%; left: -320px; animation-duration: 80s; animation-delay: -20s; opacity: 0.6; }
+  .cloud:nth-child(3) { width: 150px; height: 45px; top: 8%; left: -170px; animation-duration: 50s; animation-delay: -35s; }
+  .cloud:nth-child(4) { width: 250px; height: 70px; top: 50%; left: -270px; animation-duration: 90s; animation-delay: -10s; opacity: 0.5; }
+
+  @keyframes drift {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(100vw + 400px)); }
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  header {
+    position: relative;
+    text-align: center;
+    padding: 3.5rem 1rem 2rem;
+    border-bottom: 1px solid var(--border-glow);
+  }
+
+  .header-ornament {
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-family: 'Cinzel', serif;
+    margin-bottom: 0.75rem;
+    opacity: 0.8;
+  }
+
+  .site-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    font-weight: 700;
+    color: var(--gold);
+    text-shadow:
+      0 0 40px rgba(240, 201, 106, 0.5),
+      0 0 80px rgba(240, 201, 106, 0.2);
+    letter-spacing: 0.05em;
+    line-height: 1.1;
+    animation: titleGlow 3s ease-in-out infinite alternate;
+  }
+
+  @keyframes titleGlow {
+    from { text-shadow: 0 0 30px rgba(240,201,106,0.4), 0 0 60px rgba(240,201,106,0.15); }
+    to   { text-shadow: 0 0 50px rgba(240,201,106,0.7), 0 0 100px rgba(240,201,106,0.3); }
+  }
+
+  .site-tagline {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 1.25rem 0 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  nav a {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.4rem 1rem;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    transition: all 0.25s;
+  }
+
+  nav a:hover, nav a.active {
+    color: var(--gold);
+    border-color: var(--gold-dark);
+    background: rgba(240, 201, 106, 0.08);
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--border-glow);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    background: var(--bg-card);
+    transition: border-color 0.3s;
+    cursor: pointer;
+  }
+
+  .hero:hover {
+    border-color: rgba(196, 168, 232, 0.6);
+  }
+
+  .hero-img {
+    background:
+      linear-gradient(135deg, rgba(107,79,168,0.4) 0%, rgba(61,40,117,0.6) 100%),
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 15px,
+        rgba(255,255,255,0.015) 15px,
+        rgba(255,255,255,0.015) 16px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 15px,
+        rgba(255,255,255,0.015) 15px,
+        rgba(255,255,255,0.015) 16px
+      );
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    border-right: 1px solid var(--border-glow);
+  }
+
+  .hero-icon {
+    width: 140px;
+    height: 140px;
+    opacity: 0.85;
+    animation: portalPulse 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(196,168,232,0.6));
+  }
+
+  @keyframes portalPulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(196,168,232,0.5)); }
+    50% { transform: scale(1.04); filter: drop-shadow(0 0 35px rgba(196,168,232,0.9)); }
+  }
+
+  .hero-content {
+    padding: 2rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .tag {
+    display: inline-block;
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border: 1px solid var(--gold-dark);
+    color: var(--gold);
+    border-radius: 2px;
+    margin-bottom: 0.75rem;
+    width: fit-content;
+  }
+
+  .tag.tag-sky { border-color: rgba(168,212,245,0.5); color: var(--sky-blue); }
+  .tag.tag-nation { border-color: rgba(196,168,232,0.5); color: var(--aether-purple); }
+  .tag.tag-event { border-color: rgba(240,201,106,0.5); color: var(--gold); }
+  .tag.tag-war { border-color: rgba(220, 80, 80, 0.5); color: #f08080; }
+
+  .hero-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--cloud-white);
+    margin-bottom: 0.75rem;
+  }
+
+  .hero-excerpt {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.05em;
+  }
+
+  .article-meta .dot { opacity: 0.4; }
+
+  .read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    margin-top: 1rem;
+    transition: gap 0.2s;
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+
+  .read-more:hover { gap: 0.8rem; }
+
+  .section-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-glow);
+  }
+
+  .article-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .article-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-glow);
+    border-radius: 4px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .article-card:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(196, 168, 232, 0.5);
+    transform: translateY(-2px);
+  }
+
+  .card-thumb {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 2px;
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .thumb-aether {
+    background: linear-gradient(135deg, #1a0a40 0%, #2d1060 50%, #1a0a40 100%);
+  }
+  .thumb-sky {
+    background: linear-gradient(135deg, #0a1a35 0%, #0d2d5a 50%, #0a1520 100%);
+  }
+  .thumb-gold {
+    background: linear-gradient(135deg, #2a1a00 0%, #4a2d00 50%, #2a1800 100%);
+  }
+  .thumb-war {
+    background: linear-gradient(135deg, #2a0a0a 0%, #4a1010 50%, #2a0808 100%);
+  }
+
+  .card-thumb::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 7px,
+        rgba(255,255,255,0.02) 7px,
+        rgba(255,255,255,0.02) 8px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 7px,
+        rgba(255,255,255,0.02) 7px,
+        rgba(255,255,255,0.02) 8px
+      );
+  }
+
+  .card-icon {
+    position: relative;
+    font-size: 2.5rem;
+    z-index: 1;
+    filter: drop-shadow(0 0 8px rgba(196,168,232,0.5));
+  }
+
+  .card-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--cloud-white);
+  }
+
+  .card-excerpt {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .card-meta {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: rgba(200, 189, 232, 0.5);
+    margin-top: 0.25rem;
+  }
+
+  .main-with-sidebar {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .article-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .list-item {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-glow);
+    border-radius: 4px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    align-items: start;
+  }
+
+  .list-item:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(196, 168, 232, 0.5);
+  }
+
+  .list-thumb {
+    width: 80px;
+    height: 60px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .list-thumb::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 5px, rgba(255,255,255,0.02) 5px, rgba(255,255,255,0.02) 6px),
+      repeating-linear-gradient(90deg, transparent, transparent 5px, rgba(255,255,255,0.02) 5px, rgba(255,255,255,0.02) 6px);
+  }
+
+  .list-icon { position: relative; z-index: 1; }
+
+  .list-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--cloud-white);
+    line-height: 1.3;
+    margin-bottom: 0.3rem;
+  }
+
+  .list-excerpt {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .sidebar-widget {
+    background: var(--bg-card);
+    border: 1px solid var(--border-glow);
+    border-radius: 4px;
+    padding: 1.25rem;
+  }
+
+  .widget-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-glow);
+  }
+
+  .nation-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(196,168,232,0.1);
+    font-size: 0.82rem;
+  }
+
+  .nation-stat:last-child { border-bottom: none; }
+
+  .stat-label { color: var(--text-muted); font-style: italic; }
+  .stat-value {
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    color: var(--aether-purple);
+    letter-spacing: 0.05em;
+  }
+
+  .trending-item {
+    display: flex;
+    gap: 0.75rem;
+    align-items: start;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(196,168,232,0.1);
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .trending-item:last-child { border-bottom: none; }
+
+  .trending-item:hover .trending-title { color: var(--gold); }
+
+  .trending-num {
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: rgba(196,168,232,0.2);
+    min-width: 24px;
+    line-height: 1;
+  }
+
+  .trending-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    color: var(--cloud-white);
+    line-height: 1.3;
+    transition: color 0.2s;
+  }
+
+  footer {
+    border-top: 1px solid var(--border-glow);
+    padding: 2rem 0;
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  .footer-logo {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1.25rem;
+    color: var(--gold);
+    opacity: 0.7;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-text {
+    font-size: 0.75rem;
+    color: rgba(200, 189, 232, 0.4);
+    font-style: italic;
+  }
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-img { min-height: 180px; border-right: none; border-bottom: 1px solid var(--border-glow); }
+    .article-grid { grid-template-columns: 1fr 1fr; }
+    .main-with-sidebar { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+  }
+
+  @media (max-width: 500px) {
+    .article-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="clouds">
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+  <div class="cloud"></div>
+</div>
+
+<div class="wrapper">
+
+  <header>
+    <div class="header-ornament">✦ &nbsp;Epic News &nbsp; ✦</div>
+    <h1 class="site-title">Aether Tales</h1>
+    <p class="site-tagline"></p>
+  </header>
+
+  <nav>
+    <a href="#" class="active">Article VII</a>
+    <a href="submit.html">Submit</a>
+    <a href="center.html">Article Center</a>
+    <a href="home.html">Home</a>
+  </nav>
+
+  <article class="hero">
+    <div class="hero-img">
+      <svg class="hero-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect x="35" y="5" width="30" height="10" fill="#c4a8e8"/>
+        <rect x="15" y="15" width="20" height="10" fill="#c4a8e8"/>
+        <rect x="65" y="15" width="20" height="10" fill="#c4a8e8"/>
+        <rect x="5" y="25" width="10" height="50" fill="#c4a8e8"/>
+        <rect x="85" y="25" width="10" height="50" fill="#c4a8e8"/>
+        <rect x="15" y="75" width="20" height="10" fill="#c4a8e8"/>
+        <rect x="65" y="75" width="20" height="10" fill="#c4a8e8"/>
+        <rect x="35" y="85" width="30" height="10" fill="#c4a8e8"/>
+        <!-- Inner portal -->
+        <rect x="20" y="25" width="60" height="50" fill="#3d2875" opacity="0.8"/>
+        <!-- Portal shimmer -->
+        <rect x="25" y="30" width="50" height="40" fill="#6b4fa8" opacity="0.5"/>
+        <rect x="35" y="38" width="30" height="24" fill="#9b7fd4" opacity="0.4"/>
+        <!-- Inner glow blocks -->
+        <rect x="40" y="43" width="8" height="8" fill="#f0c96a" opacity="0.9"/>
+        <rect x="52" y="43" width="8" height="8" fill="#c4a8e8" opacity="0.9"/>
+        <rect x="40" y="51" width="8" height="8" fill="#c4a8e8" opacity="0.9"/>
+        <rect x="52" y="51" width="8" height="8" fill="#f0c96a" opacity="0.9"/>
+        <!-- Corner highlight pixels -->
+        <rect x="15" y="15" width="5" height="5" fill="#f0c96a" opacity="0.6"/>
+        <rect x="80" y="15" width="5" height="5" fill="#f0c96a" opacity="0.6"/>
+        <rect x="15" y="80" width="5" height="5" fill="#f0c96a" opacity="0.6"/>
+        <rect x="80" y="80" width="5" height="5" fill="#f0c96a" opacity="0.6"/>
+      </svg>
+    </div>
+    <div class="hero-content">
+      <span class="tag tag-nation">AETHER TALES</span>
+      <h2 class="hero-title">Aelaryth Dominion.</h2>
+      <p class="hero-excerpt">The Atlantean Bank is led by Dodo.</p>
+      <div class="article-meta">
+        <span></span>
+        <span class="dot">·</span>
+        <span></span>
+        <span class="dot">·</span>
+        <span></span>
+      </div>
+      <button class="read-more" onclick="alert('Full article would open here!')">Read Full Dispatch &rarr;</button>
+    </div>
+  </article>
+
+  <div class="section-label">Latest Stories</div>
+
+  <div class="article-grid">
+    <article class="article-card" onclick="alert('Opening article...')">
+      <div class="card-thumb thumb-sky"><span class="card-icon">⛅</span></div>
+      <span class="tag tag-sky">Led by 1 leader.</span>
+      <h3 class="card-title"></h3>
+      <p class="card-excerpt"></p>
+      <div class="card-meta"> &nbsp;·&nbsp;Leaders</div>
+    </article>
+
+    <article class="article-card" onclick="alert('Opening article...')">
+      <div class="card-thumb thumb-war"><span class="card-icon">🔱</span></div>
+	  <div class="card-thumb" style="background-image: url("https://tse3.mm.bing.net/th/id/OIP.d10jYotmRhb48gfSW_fcwQHaEK?pid=Api&P=0&h=180"); background-size: cover; background-position: center;"></div>
+      <span class="tag tag-war">Atlantis Nation</span>
+      <h3 class="card-title"></h3>
+      <p class="card-excerpt"></p>
+      <div class="card-meta"> &nbsp;·&nbsp;Atlantis</div>
+    </article>
+
+    <article class="article-card" onclick="alert('Opening article...')">
+      <div class="card-thumb thumb-gold"><span class="card-icon">🏛️</span></div>
+      <span class="tag tag-event">They are peaceful.</span>
+      <h3 class="card-title"></h3>
+      <p class="card-excerpt"></p>
+      <div class="card-meta"> &nbsp;·&nbsp;Peaceful</div>
+    </article>
+  </div>
+
+  <div class="main-with-sidebar">
+
+    <div>
+      <div class="section-label">More Dispatches</div>
+      <div class="article-list">
+
+        <article class="list-item" onclick="alert('Opening article...')">
+          <div class="list-thumb thumb-aether"><span class="list-icon">📝</span></div>
+          <div>
+            <div class="tag tag-nation" style="margin-bottom:0.4rem;">Interview</div>
+            <h3 class="list-title">"I know you're a leader of one of the biggest nations on Atlantis, what can you tell me about it?"</h3>
+            <p class="list-excerpt">"Well we are a friendly Trading Nation we are trying to become the biggest one , we have a lot of good people in my civilisation and ofc we also have the Bank Owned by my good old friend Peacemaker/Horsekiller he helps me a lot ngl he is one of my most trusted friends."</p>
+            <div class="card-meta" style="margin-top:0.4rem;"> &nbsp;·&nbsp;Plans</div>
+          </div>
+        </article>
+
+        <article class="list-item" onclick="alert('Opening article...')">
+          <div class="list-thumb thumb-sky"><span class="list-icon">💰</span></div>
+          <div>
+            <div class="tag tag-sky" style="margin-bottom:0.4rem;">Economy</div>
+            <h3 class="list-title">"What's your current opinion on both the Aether and the other Atlantis nations? Any rivalry?"</h3>
+            <p class="list-excerpt">"Oh i love Aether nice people ofc there are some people from Aether that are not that nice but that doesnt change my opinion about Aether
+when we talk about other Nations in Atlantis I think personally they are all cool especially The Bums Of Atlantis, however we have our differences with The Sunken Ones, but I just want peace in Atlantis."</p>
+            <div class="card-meta" style="margin-top:0.4rem;"> &nbsp;·&nbsp;Wealth</div>
+          </div>
+        </article>
+
+        <article class="list-item" onclick="alert('Opening article...')">
+          <div class="list-thumb thumb-gold"><span class="list-icon">🔒</span></div>
+          <div>
+            <div class="tag tag-event" style="margin-bottom:0.4rem;">Security</div>
+            <h3 class="list-title">"Appart from you well known bank, is there anything special about your nation that makes it different to the rest?"</h3>
+            <p class="list-excerpt">"Well we are a very organized Nation a good system and a lot of wonderful people i can assure Aelaryth is The Best choice to live in Atlantis ( i am not tryna talk any other nations bad) and we are not just focused on fighting we focus on peace."</p>
+            <div class="card-meta" style="margin-top:0.4rem;"> &nbsp;·&nbsp;Security</div>
+          </div>
+        </article>
+
+        <article class="list-item" onclick="alert('Opening article...')">
+          <div class="list-thumb thumb-aether"><span class="list-icon">🤝</span></div>
+          <div>
+            <div class="tag tag-war" style="margin-bottom:0.4rem;">Opinions</div>
+            <h3 class="list-title">"If you had to say what's your main concern for the event what it'd be?"</h3>
+            <p class="list-excerpt">"Tbh a lot of my citizens are concerned about The Sunken Ones at the moment i am trying to calm everyone down as a lot of people think that The Sunken Ones are an aggressive Nation but i dont really think that."</p>
+            <div class="card-meta" style="margin-top:0.4rem;">&nbsp;·&nbsp;Opinions</div>
+          </div>
+        </article>
+
+        <article class="list-item" onclick="alert('Opening article...')">
+          <div class="list-thumb thumb-aether"><span class="list-icon">⚔️</span></div>
+          <div>
+            <div class="tag tag-war" style="margin-bottom:0.4rem;">Outcome</div>
+            <h3 class="list-title">"I'm sure my readers also would love hear about which build style and internal laws/punishments, can you talk me briefly about it?
+"</h3>
+            <p class="list-excerpt">"I think the build style is really fitting for them like everything kinda shows what they stand for, you can see it in how things are built and placed, its not random at all its more like made for a purpose yk, and about the laws they are not random either they focus a lot on order and structure so everyone knows what they are supposed to do, its not too chaotic but also not completely free. for punishments its depending on what you do ofc, smaller things are handled lighter but if someone does something serious like betraying or breaking important rules then it gets way more strict, its mostly about keeping everything stable and fair for everyone."</p>
+            <div class="card-meta" style="margin-top:0.4rem;">&nbsp;·&nbsp;Outcome</div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <aside class="sidebar">
+
+      <div class="sidebar-widget">
+        <div class="widget-title">Bankers Information</div>
+        <div class="nation-stat">
+          <span class="stat-label">Realm</span>
+          <span class="stat-value">Atlantis</span>
+        </div>
+        <div class="nation-stat">
+          <span class="stat-label">Leaders and Officials</span>
+          <span class="stat-value">1</span>
+        </div>
+        <div class="nation-stat">
+          <span class="stat-label">Leaders</span>
+          <span class="stat-value">Peacemaker</span>
+        </div>
+        <div class="nation-stat">
+          <span class="stat-label">Allies</span>
+          <span class="stat-value">Aelaryth</span>
+        </div>
+        <div class="nation-stat">
+          <span class="stat-label">Conflict Status</span>
+          <span class="stat-value" style="color:#f08080;">Inactive</span>
+        </div>
+        <div class="nation-stat">
+          <span class="stat-label">Diplomats</span>
+          <span class="stat-value">Unknown</span>
+        </div>
+      </div>
+
+      <div class="sidebar-widget">
+        <div class="widget-title">Trending</div>
+        <div class="trending-item" onclick="alert('Article...')">
+          <span class="trending-num">01</span>
+          <span class="trending-title">"I plan for world peace and economic alliances with the Aether."</span>
+        </div>
+        <div class="trending-item" onclick="alert('Article...')">
+          <span class="trending-num">02</span>
+          <span class="trending-title">"We wish to donate resources to struggling nations, no matter the size."</span>
+        </div>
+        <div class="trending-item" onclick="alert('Article...')">
+          <span class="trending-num">03</span>
+          <span class="trending-title">"In general the bank will not take sides, we will try to keep our losses minimal."</span>
+        </div>
+        <div class="trending-item" onclick="alert('Article...')">
+          <span class="trending-num">04</span>
+          <span class="trending-title">"No matter what people think of you, we will not jump to conclusion without cause."</span>
+        </div>
+        <div class="trending-item" onclick="alert('Article...')">
+          <span class="trending-num">05</span>
+          <span class="trending-title">"When people start chasing resources just for the sake of having more, thats when everything falls apart."</span>
+        </div>
+      </div>
+
+    </aside>
+  </div>
+
+  <footer>
+    <div class="footer-logo">Aether Tales</div>
+    <p class="footer-text"> &nbsp;✦&nbsp;</p>
+  </footer>
+
+</div>
+</body>
+</html>
